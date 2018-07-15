@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>TCP连接的建立与关闭 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="TCP连接的建立与关闭​    今天在某个技术群里水群的时候，忽然看到一个有意思的比较有意思的问题：HTTP请求中的TCP连接是由谁来关闭的，服务端还是客户端？然后追问了一下，实际表达的意思是在一个TCP连接中，发出第一个关闭请求的是服务端还是客户端？有什么场景会出现服务端先关闭的情况。    然后今天有空的时候抓了一下包，来专门测试了一下这种情况。 TCP连接的全双工性​    TCP是一种面向">
+<meta name="keywords" content="计算机网络,TCP&#x2F;IP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP连接的建立与关闭">
+<meta property="og:url" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="TCP连接的建立与关闭​    今天在某个技术群里水群的时候，忽然看到一个有意思的比较有意思的问题：HTTP请求中的TCP连接是由谁来关闭的，服务端还是客户端？然后追问了一下，实际表达的意思是在一个TCP连接中，发出第一个关闭请求的是服务端还是客户端？有什么场景会出现服务端先关闭的情况。    然后今天有空的时候抓了一下包，来专门测试了一下这种情况。 TCP连接的全双工性​    TCP是一种面向">
+<meta property="og:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP的三次握手.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP的四次挥手.jpg">
+<meta property="og:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP三次挥手建立连接的报文.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP进行数据传输.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP保证连接存活.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP连接保证存活状态.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP在浏览器主动关闭的表现.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP连接在标签页关闭的情况.png">
+<meta property="og:updated_time" content="2018-07-15T07:44:11.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCP连接的建立与关闭">
+<meta name="twitter:description" content="TCP连接的建立与关闭​    今天在某个技术群里水群的时候，忽然看到一个有意思的比较有意思的问题：HTTP请求中的TCP连接是由谁来关闭的，服务端还是客户端？然后追问了一下，实际表达的意思是在一个TCP连接中，发出第一个关闭请求的是服务端还是客户端？有什么场景会出现服务端先关闭的情况。    然后今天有空的时候抓了一下包，来专门测试了一下这种情况。 TCP连接的全双工性​    TCP是一种面向">
+<meta name="twitter:image" content="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/TCP的三次握手.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-TCP连接的建立与关闭" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/16/TCP连接的建立与关闭/" class="article-date">
+  <time datetime="2018-04-16T07:42:37.000Z" itemprop="datePublished">2018-04-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      TCP连接的建立与关闭
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="TCP连接的建立与关闭"><a href="#TCP连接的建立与关闭" class="headerlink" title="TCP连接的建立与关闭"></a>TCP连接的建立与关闭</h1><p>​    今天在某个技术群里水群的时候，忽然看到一个有意思的比较有意思的问题：HTTP请求中的TCP连接是由谁来关闭的，服务端还是客户端？然后追问了一下，实际表达的意思是在一个TCP连接中，发出第一个关闭请求的是服务端还是客户端？有什么场景会出现服务端先关闭的情况。<br>    然后今天有空的时候抓了一下包，来专门测试了一下这种情况。</p>
+<h3 id="TCP连接的全双工性"><a href="#TCP连接的全双工性" class="headerlink" title="TCP连接的全双工性"></a>TCP连接的全双工性</h3><p>​    TCP是一种面向连接的、可靠的、基于字节流的传输层通信协议。<br>    首先要明确的一个概念是TCP的连接是基于全双工连接的，也就是说在同一时刻通信的两方能够进行两个方向上的双向传输。明确了这个概念之后再来考虑TCP连接关闭的情况。</p>
+<h3 id="TCP连接的建立–三次挥手"><a href="#TCP连接的建立–三次挥手" class="headerlink" title="TCP连接的建立–三次挥手"></a>TCP连接的建立–三次挥手</h3><p>​    在TCP建立连接的开始，显示客户端发送一个报文段，来向服务端发起连接请求，并将TCP报文首部的SYN字段设置为1.<br>    第二步是服务器主机发送一个ACK报文段来确认TCP的连接允许，这个ACK报文段中SYN比特仍然被设置为1.<br>    最后一步是客户端发出的对于服务端发送的连接允许的ACK确认，用来确认已经接收到服务端主机的报文，这一步中将SYN设置为0。<br><img src="/2018/04/16/TCP连接的建立与关闭/TCP的三次握手.jpg" alt="TCP连接建立的三次握手"></p>
+<h3 id="TCP连接的关闭–四次挥手"><a href="#TCP连接的关闭–四次挥手" class="headerlink" title="TCP连接的关闭–四次挥手"></a>TCP连接的关闭–四次挥手</h3><p>​    在标准的模式中，TCP关闭连接首先是由客户端发出一个含有FIN比特并且设置为1的报文段，用来通知服务端将要关闭连接。<br>    随后服务端向客户端发送一个ACK报文，执行被动关闭。<br>    一段时间后接收FIN报文段的服务端一端将会调用close关闭套接字，TCP将发送一个FIN。<br>    接收最终FIN的端，即最早发送FIN的客户端端将会发送一个ACK确认。<br>    <img src="/2018/04/16/TCP连接的建立与关闭/TCP的四次挥手.jpg" alt="TCP连接关闭的四次挥手"><br>    上面提到的TCP连接关闭是标准状态的连接关闭，也就是由客户端申请的关闭连接。</p>
+<h3 id="实际抓包测试"><a href="#实际抓包测试" class="headerlink" title="实际抓包测试"></a>实际抓包测试</h3><p>​    在下午的时候，我抓了一下在TCP连接的建立和关闭过程中的TCP数据包，查了一下在关闭的时候究竟怎么关闭的情况。然后发现两种情况都是可能出现的，也就是说存在服务器主动发起关闭连接的情况和客户端主动发起关闭连接的情况。在测试用例前，我先ping了一下 <a href="http://www.baidu.com，" target="_blank" rel="noopener">www.baidu.com，</a> 得到了百度的ip119.75.213.61。</p>
+<h4 id="TCP连接的抓包测试"><a href="#TCP连接的抓包测试" class="headerlink" title="TCP连接的抓包测试"></a>TCP连接的抓包测试</h4><p><img src="/2018/04/16/TCP连接的建立与关闭/TCP三次挥手建立连接的报文.png" alt="TCP三次握手建立连接的报文"><br>    我是通过在已经开启的浏览器中，打开新建标签页访问119.75.213.61对百度进行连接的方式打开的。能够很清楚的看到在TCP开始时共有三个TCP包，分别承载SYN和ACK来建立连接。<br>    当TCP成功建立连接，浏览器将会发送一条HTTP指令，申请服务器资源访问：GET / HTTP/1.1。<br><img src="/2018/04/16/TCP连接的建立与关闭/TCP进行数据传输.png" alt="TCP进行数据传输"><br>    之后的传输是将服务器的资源传输到浏览器上。</p>
+<h4 id="TCP保证连接存活的机制"><a href="#TCP保证连接存活的机制" class="headerlink" title="TCP保证连接存活的机制"></a>TCP保证连接存活的机制</h4><p>​    在发送第一个HTTP请求的时候，在报文段头部包含了一些HTTP的设置，其中通过对Connection的设置，来进行持续连接的设置。<br><img src="/2018/04/16/TCP连接的建立与关闭/TCP保证连接存活.png" alt="TCP保证连接存活"><br>    将Connection设置为keep-alive来确保打开的连接是一个持续连接，也就是请求完一个对象之后不关闭连接。<br>    在连接开启过程中，探测到我的主机周期性的向服务端发送TCP Keep-Alive报文，并且等待服务端的确认来确保TCP连接的开启。<br><img src="/2018/04/16/TCP连接的建立与关闭/TCP连接保证存活状态.png" alt="TCP连接保证存活状态"></p>
+<h4 id="客户端主动关闭TCP连接"><a href="#客户端主动关闭TCP连接" class="headerlink" title="客户端主动关闭TCP连接"></a>客户端主动关闭TCP连接</h4><p>​    这篇文章的主要目的是为了讨论客户端或者服务端主动关闭TCP连接的情况，然后抓包测试过程中，我发现仅通过在浏览器对百度的请求条件下就能够进行这两种测试。<br>    第一种条件是我主动关闭浏览器，然后我这边将会向服务端发送FIN报文，这种状况就是正常的TCP连接关闭的状态。<br><img src="/2018/04/16/TCP连接的建立与关闭/TCP在浏览器主动关闭的表现.png" alt="TCP在浏览器主动关闭的表现"><br>    在整个关闭过程中，浏览器发送第一个FIN包:Seq=345  ACK=31994，服务端接收并且发送一个ACK报文:Seq=31994  ACK=346。然后紧接着服务端发送一个对于服务端关闭连接的FIN报文，在这里能够看到的是服务端对这个报文的改变是刚刚传输的ACK报文段中修改了FIN状态：Seq=31994  ACK=346，浏览器接收到这个报文段，然后发送一个确认ACK：Seq=346 ACK=31995。连接就正式关闭了。<br>    在这整个过程中能看到的是发起关闭连接申请的是浏览器，服务器对其进行相应。</p>
+<h4 id="服务端主动关闭连接"><a href="#服务端主动关闭连接" class="headerlink" title="服务端主动关闭连接"></a>服务端主动关闭连接</h4><p>​    在关闭状态还存在一种非常奇妙的情况，也就是服务端主动关闭连接。<br>    上一个测试例子，我是访问百度之直接关闭浏览器，在这一种情况下，我关闭的仅仅是标签页，也就是浏览器仍然开启，TCP连接建立和前期传输两者间并没有区别。<br><img src="/2018/04/16/TCP连接的建立与关闭/TCP连接在标签页关闭的情况.png" alt="TCP连接在标签页关闭的情况"><br>    服务端是在60s左右对我发送了一个FIN报文，但是，实际上我在41s左右的时刻就已经关闭了标签页了，也就是说，在我关闭标签页之后，浏览器仍然维持着这一条TCP连接，知道服务器检测到我长久不使用这个连接，才开始发送报文将连接关闭。<br>    在这种情况的时候，服务端会发送一个FIN报文段：Seq=32039  Ack=356，然后浏览器对这个报文段进行相应，发送一个FIN的报文段：Seq=356  Ack=32040，等服务器接收到之后，会发送一个ACK报文段：Seq=32040  Ack=357，连接关闭，当然这里关闭的连接，是服务端对客户端的连接，在这个状态出现之后，仍然能够看到浏览器向服务端发送的一些保持TCP连接的报文。<br>    所以，<code>在服务端主动关闭TCP连接的情况下，TCP的关闭阶段只会进行三次包的传输</code>，因为要保证用户可能存在的继续使用连接的情况，所以服务端不会向用户发送关闭确认的ACK，而是继续保持该连接一段时间，当达到某段时间后，如果依然没有进行过TCP的相应，那么服务端会直接发送RST报文段，将连接复原。<br>    <code>在整理这篇文章的时候，忽然考虑到服务端是怎样检测浏览器已经关闭了标签页的，然后打开了一个百度的页面进行测试。结果发现，哪怕是没有关闭标签页，持续开启百度页面，服务器依然会在一定时间后向我的浏览器发送FIN报文，然后进入上述状态，直到发送RST报文复原TCP连接。这样之后会在我再次访问当前百度页面的时候进行重新的TCP连接。</code>这个状态是与我是否关闭标签页没关系的，只要浏览器不关闭，这个打开的TCP连接只会在超时未响应或者重复开启TCP连接的时候进行复原，而这个超时连接时间应该是服务端进行设置的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/16/TCP连接的建立与关闭/" data-id="cjjmji7gq000ldnmcqtfrbgrh" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/计算机网络/">计算机网络</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/17/AQS/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          AQS
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/15/偏向锁、轻量级锁、重量级锁/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">偏向锁、轻量级锁、重量级锁</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

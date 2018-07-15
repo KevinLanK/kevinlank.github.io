@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Ubuntu环境系统搭建 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Ubuntu环境系统搭建​    昨天下午，想在Ubuntu系统上安装一个便签的应用，结果发现所有的源不能够更新，查了一下，发现官方已经停止对Ubuntu17.04进行维护，然后可以更新到17.10版本，就更新了一下系统。中途因误操作关掉了更新进程，系统崩溃，然后重新刷了一下16.04LTS，升级到了17.10.所有环境和配置丢失，重新开始配环境，记录一下搭建的环境及步骤。 删除OpenJDK并安">
+<meta name="keywords" content="Ubuntu,系统搭建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu环境系统搭建">
+<meta property="og:url" content="http://yoursite.com/2018/03/08/Ubuntu环境系统搭建/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Ubuntu环境系统搭建​    昨天下午，想在Ubuntu系统上安装一个便签的应用，结果发现所有的源不能够更新，查了一下，发现官方已经停止对Ubuntu17.04进行维护，然后可以更新到17.10版本，就更新了一下系统。中途因误操作关掉了更新进程，系统崩溃，然后重新刷了一下16.04LTS，升级到了17.10.所有环境和配置丢失，重新开始配环境，记录一下搭建的环境及步骤。 删除OpenJDK并安">
+<meta property="og:updated_time" content="2018-07-15T06:35:05.894Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ubuntu环境系统搭建">
+<meta name="twitter:description" content="Ubuntu环境系统搭建​    昨天下午，想在Ubuntu系统上安装一个便签的应用，结果发现所有的源不能够更新，查了一下，发现官方已经停止对Ubuntu17.04进行维护，然后可以更新到17.10版本，就更新了一下系统。中途因误操作关掉了更新进程，系统崩溃，然后重新刷了一下16.04LTS，升级到了17.10.所有环境和配置丢失，重新开始配环境，记录一下搭建的环境及步骤。 删除OpenJDK并安">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Ubuntu环境系统搭建" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/08/Ubuntu环境系统搭建/" class="article-date">
+  <time datetime="2018-03-08T08:37:05.000Z" itemprop="datePublished">2018-03-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Ubuntu环境系统搭建
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Ubuntu环境系统搭建"><a href="#Ubuntu环境系统搭建" class="headerlink" title="Ubuntu环境系统搭建"></a>Ubuntu环境系统搭建</h1><p>​    昨天下午，想在Ubuntu系统上安装一个便签的应用，结果发现所有的源不能够更新，查了一下，发现官方已经停止对Ubuntu17.04进行维护，然后可以更新到17.10版本，就更新了一下系统。中途因误操作关掉了更新进程，系统崩溃，然后重新刷了一下16.04LTS，升级到了17.10.所有环境和配置丢失，重新开始配环境，记录一下搭建的环境及步骤。</p>
+<h3 id="删除OpenJDK并安装OracleJDK"><a href="#删除OpenJDK并安装OracleJDK" class="headerlink" title="删除OpenJDK并安装OracleJDK"></a>删除OpenJDK并安装OracleJDK</h3><p>​     Ubuntu17.10自带的JDK版本是openjdk，所以删除，安装OracleJDK。</p>
+<h6 id="删除默认JDK"><a href="#删除默认JDK" class="headerlink" title="删除默认JDK"></a>删除默认JDK</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install default-jdk  </span><br><span class="line">sudo apt-get autoremove default-jdk  </span><br><span class="line">sudo apt-get autoremove openjdk*</span><br></pre></td></tr></table></figure>
+<h6 id="安装OracleJDK"><a href="#安装OracleJDK" class="headerlink" title="安装OracleJDK"></a>安装OracleJDK</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">解压下载好的JDK9，移动到文件夹</span><br><span class="line">sudo mkdir /usr/java</span><br><span class="line">sudo mv jdk-9.0.4 /usr/java</span><br><span class="line">配置环境变量：</span><br><span class="line">sudo gedit /etc/environment</span><br><span class="line">在末尾添加</span><br><span class="line">PATH=&quot;/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$JAVA_HOME/bin&quot;</span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib</span><br><span class="line">export JAVA_HOME=/usr/java/jdk-9.0.4</span><br><span class="line">保存，输入命令：</span><br><span class="line">source /etc/environment</span><br><span class="line">输入测试命令：</span><br><span class="line">java -version</span><br></pre></td></tr></table></figure>
+<h3 id="安装vim"><a href="#安装vim" class="headerlink" title="安装vim"></a>安装vim</h3><p>​     全新的17.10并没有内置vim,所以需要自己安装vim</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install vim</span><br></pre></td></tr></table></figure>
+<h3 id="安装LAMP环境"><a href="#安装LAMP环境" class="headerlink" title="安装LAMP环境"></a>安装LAMP环境</h3><h6 id="安装apache"><a href="#安装apache" class="headerlink" title="安装apache"></a>安装apache</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install apache2</span><br></pre></td></tr></table></figure>
+<h6 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install mysql-server（中间设置密码）</span><br></pre></td></tr></table></figure>
+<h6 id="安装PHP"><a href="#安装PHP" class="headerlink" title="安装PHP"></a>安装PHP</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install php7.1 php7.1-dev</span><br></pre></td></tr></table></figure>
+<h6 id="重启apache"><a href="#重启apache" class="headerlink" title="重启apache"></a>重启apache</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/apache restart (在http://localhost/ 检查apache运行)</span><br></pre></td></tr></table></figure>
+<h6 id="php探针"><a href="#php探针" class="headerlink" title="php探针"></a>php探针</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /var/www/html/info.php</span><br><span class="line">info.php: &lt;?php  phpinfo();</span><br></pre></td></tr></table></figure>
+<h6 id="安装phpmyadmin"><a href="#安装phpmyadmin" class="headerlink" title="安装phpmyadmin"></a>安装phpmyadmin</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install phpmyadmin</span><br><span class="line">sudo apt-get install php-mbstring</span><br><span class="line">sudo apt-get install php-gettext</span><br><span class="line">建立软连接</span><br><span class="line">sudo ln -s /usr/share/phpmyadmin /var/www/html/phpmyadmin</span><br><span class="line">nano /etc/php/7.0/apache2/php.ini</span><br><span class="line">配置phpmyadmin</span><br><span class="line">display_errors = On</span><br><span class="line">extension=php_mbstring.dll</span><br><span class="line">重启apache</span><br><span class="line">打开 localhost/phpmyadmin/测试，成功</span><br></pre></td></tr></table></figure>
+<h6 id="安装Tomcat"><a href="#安装Tomcat" class="headerlink" title="安装Tomcat"></a>安装Tomcat</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install tomcat8</span><br><span class="line">apt-get install tomcat8-docs tomcat8-examples tomcat8-admin</span><br></pre></td></tr></table></figure>
+<h3 id="安装IDEA"><a href="#安装IDEA" class="headerlink" title="安装IDEA"></a>安装IDEA</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">在官网下载idea的tar.gz包，解压并且移动到文件夹</span><br><span class="line">cd /bin</span><br><span class="line">sh ./idea.sh</span><br></pre></td></tr></table></figure>
+<h3 id="安装HEXO"><a href="#安装HEXO" class="headerlink" title="安装HEXO"></a>安装HEXO</h3><h6 id="安装Nodejs生成静态页面"><a href="#安装Nodejs生成静态页面" class="headerlink" title="安装Nodejs生成静态页面"></a>安装Nodejs生成静态页面</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nodejs</span><br><span class="line">sudo apt-get install npm</span><br></pre></td></tr></table></figure>
+<h6 id="安装Hexo并执行初始化"><a href="#安装Hexo并执行初始化" class="headerlink" title="安装Hexo并执行初始化"></a>安装Hexo并执行初始化</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo npm install -g hexo</span><br><span class="line">hexo init &lt;d&gt;</span><br><span class="line">cd &lt;d&gt;</span><br><span class="line">npm install </span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+<h6 id="Hexo命令"><a href="#Hexo命令" class="headerlink" title="Hexo命令"></a>Hexo命令</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo clean           #清除数据</span><br><span class="line">hexo g(generate)     #生成静态网页</span><br><span class="line">hexo s(server)       #运行本地服务器</span><br><span class="line">hexo d(deploy)       #推送数据到git仓库</span><br></pre></td></tr></table></figure>
+<h6 id="安装配置github"><a href="#安装配置github" class="headerlink" title="安装配置github"></a>安装配置github</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git</span><br><span class="line">输入配置github，否则推送会报错未有合适地址</span><br><span class="line">git config --global user.name &quot;yourName&quot;</span><br><span class="line">git config --global user.eamil &quot;eamil@eamil.com&quot;</span><br><span class="line">创建公钥</span><br><span class="line">ssh-keygen -C &apos;you eamil@eamil.com&apos; -t rsa</span><br><span class="line">打开~/.ssh/id_rsa.pub 文件查看生成的公钥，并且将其复制到github的setting中的ssh keys</span><br></pre></td></tr></table></figure>
+<h6 id="配置Hexo部署到github"><a href="#配置Hexo部署到github" class="headerlink" title="配置Hexo部署到github"></a>配置Hexo部署到github</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit _config.yml</span><br><span class="line">在内容的最后修改：</span><br><span class="line">deploy:</span><br><span class="line"> type: git</span><br><span class="line"> repository: https://github.com/tofulife/tofulife.github.io.git</span><br><span class="line"> branch: master</span><br><span class="line">保存退出，并在终端输入</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<h6 id="Hexo在文章中插入图片"><a href="#Hexo在文章中插入图片" class="headerlink" title="Hexo在文章中插入图片"></a>Hexo在文章中插入图片</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">打开hexo文件夹下的_config.yml</span><br><span class="line">sudo gedit _config.yml</span><br><span class="line">开启设置： post_asset_folder:ture</span><br><span class="line">开启后，新建文章会建立同名文件夹。 保存退出，并在终端输入</span><br><span class="line">npm install https://github.com/CodeFalling/hexo-asset-image --save</span><br><span class="line">在文章中，添加   ![logo](/文件夹名字/图片名字.jpg)  可插入图片</span><br></pre></td></tr></table></figure>
+<h6 id="使用Hexo推送文章"><a href="#使用Hexo推送文章" class="headerlink" title="使用Hexo推送文章"></a>使用Hexo推送文章</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+<h3 id="安装搜狗输入法"><a href="#安装搜狗输入法" class="headerlink" title="安装搜狗输入法"></a>安装搜狗输入法</h3><p>​     搜狗输入法在Ubuntu上面可以说是非常人性化了，哪怕是17.10，直接到搜狗输入的官方网站下载deb包，然后在软件中心安装。</p>
+<h3 id="安装网易云音乐"><a href="#安装网易云音乐" class="headerlink" title="安装网易云音乐"></a>安装网易云音乐</h3><p>​     无音乐，不代码。一个充满音乐质感的环境对于提升工作效率有极大的帮助，但是安装网易云音乐在17.10并不是一个愉快的体验。<br>      网易云官网上有关于netease-music for linux  的deb包，版本号为V1.1.0，位数为64位。直接下载安装。通过在软件库里打开图标会出现错误，桌面缓冲10s左右，退出，我没有打开进程查看，但是网络上的解释里面有反应存在网易云音乐的进程。解决方案在网易云音乐V1.0.1版本的时候通过在/usr/share/applications/netease-cloud-music.desktop修改命令参数，能够正常使用。V1.1.0版本此方法失效，可行的两个解决方案：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gksu netease-cloud-music %U</span><br><span class="line">通过命令开启网易云音乐，然后这个命令打开后可以关闭Ctrl+C关闭进程，网易云正常使用。</span><br><span class="line">sudo netease-cloud-music</span><br><span class="line">必须使用root命令，开启后进程不能够关闭，才能够正常使用。</span><br></pre></td></tr></table></figure>
+<p> 另外还看到了一种解决方案，但是我的电脑上并没有成功，也可以尝试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit /usr/share/applications/netease-cloud-music.desktop</span><br><span class="line">在打开的文档里面，将Terminal=false这一行移动到EXec=netease-cloud-music %U 这一行上面</span><br><span class="line">有说这种方法成功的，但是我并没有成功。</span><br></pre></td></tr></table></figure>
+<h4 id="安装Numix主题"><a href="#安装Numix主题" class="headerlink" title="安装Numix主题"></a>安装Numix主题</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:numix/ppa</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install numix-gtk-theme numix-icon-theme-circle</span><br><span class="line">安装Gnome Tweak Tool 来修改主题和图标</span><br><span class="line">sudo apt-get install gnome-tweak-tool</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/08/Ubuntu环境系统搭建/" data-id="cjjmji7gr000ndnmcnmhjk969" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/系统搭建/">系统搭建</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/09/Java多态/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Java多态
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/08/Java的复用/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Java的复用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

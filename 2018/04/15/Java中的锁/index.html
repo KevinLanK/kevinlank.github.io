@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Java中的锁  | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Java中的锁​    在《同步语义-synchronized+final》一文中，我提到了Java中的锁–synchronized。synchronized在Java中是内置锁的实现，通过将方法、变量或者对象设为synchronized来实现自动的加锁和解锁步骤。    但是在Java中，还有多种或显式或隐式的锁来实现并发编程，在这里详细的整理一下。 锁的分类​    在Java里，锁能够按照多">
+<meta name="keywords" content="Java,并发,锁">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中的锁 ">
+<meta property="og:url" content="http://yoursite.com/2018/04/15/Java中的锁/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java中的锁​    在《同步语义-synchronized+final》一文中，我提到了Java中的锁–synchronized。synchronized在Java中是内置锁的实现，通过将方法、变量或者对象设为synchronized来实现自动的加锁和解锁步骤。    但是在Java中，还有多种或显式或隐式的锁来实现并发编程，在这里详细的整理一下。 锁的分类​    在Java里，锁能够按照多">
+<meta property="og:updated_time" content="2018-07-15T07:40:20.778Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java中的锁 ">
+<meta name="twitter:description" content="Java中的锁​    在《同步语义-synchronized+final》一文中，我提到了Java中的锁–synchronized。synchronized在Java中是内置锁的实现，通过将方法、变量或者对象设为synchronized来实现自动的加锁和解锁步骤。    但是在Java中，还有多种或显式或隐式的锁来实现并发编程，在这里详细的整理一下。 锁的分类​    在Java里，锁能够按照多">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java中的锁" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/15/Java中的锁/" class="article-date">
+  <time datetime="2018-04-15T07:39:45.000Z" itemprop="datePublished">2018-04-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java中的锁 
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java中的锁"><a href="#Java中的锁" class="headerlink" title="Java中的锁"></a>Java中的锁</h1><p>​    在《同步语义-synchronized+final》一文中，我提到了Java中的锁–synchronized。synchronized在Java中是内置锁的实现，通过将方法、变量或者对象设为synchronized来实现自动的加锁和解锁步骤。<br>    但是在Java中，还有多种或显式或隐式的锁来实现并发编程，在这里详细的整理一下。</p>
+<h3 id="锁的分类"><a href="#锁的分类" class="headerlink" title="锁的分类"></a>锁的分类</h3><p>​    在Java里，锁能够按照多种方式区分：</p>
+<blockquote>
+<p>依据线程执行的<code>公平性</code>：公平锁和非公平锁<br>依据能否<code>有多个线程持有同一个锁</code>：共享锁和独占锁、互斥锁和读写锁<br>按照线程<code>加锁的态度</code>：乐观锁和悲观锁<br>依据线程<code>持有锁的程度</code>：偏向锁和轻量级锁和重量级锁<br>除此之外，还有：分段锁、可重入锁、自旋锁、阻塞锁</p>
+</blockquote>
+<h3 id="乐观锁和悲观锁"><a href="#乐观锁和悲观锁" class="headerlink" title="乐观锁和悲观锁"></a>乐观锁和悲观锁</h3><p>​    从宏观上讲，锁分为乐观锁和悲观锁。</p>
+<h5 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h5><p>​    乐观锁对上锁保持一种乐观态度，即认为在线程执行过程中，读多写少，遇到并发写的时间较少，所以采用不加锁的方式，也就是无锁编程。在Java中，实现乐观锁的方式为循环CAS方法，只通过在数据提交时的比对，来判断是否应该进行数据更新。这种方式存在ABA问题，循环时间过长的时候开销大，只能保证一个共享变量的原子操作。乐观锁的一致性比悲观锁差，但是对于种地程度的并发，效率大大提高。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CAS的实现：</span><br><span class="line">	compareAndSet(int v, int a);</span><br></pre></td></tr></table></figure>
+<h5 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h5><p>​    悲观锁对上锁保持悲观态度，即认为在线程执行过程中，写多读少，遇到并发写的时间较多，所以对于每次读写数据的时候都会进行上锁。在Java中，独占锁或synchronized的实现都是悲观锁的实现。悲观锁的安全性高，更适合高并发的情况。</p>
+<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>​    自旋锁是指线程A想要获取一个锁，但是这个锁被其他线程持有，所以A通过不断地循环来判断锁是否已经被释放，当前可用。<br>    自旋锁在自旋时候并不会释放CPU，所以持有自旋锁的线程需要尽快的释放锁，以让其他需要占有的线程持有锁，防止不断地自旋消耗CPU资源。而如果持有锁的线程不是尽快释放锁，而是将其他线程堵塞，这种实现是阻塞锁。<br>    持有自旋锁的线程在睡眠前或者任务结束后，应当立即释放锁以便让其他线程能够获得锁。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">自旋锁的实现：</span><br><span class="line">	public void lock() &#123;</span><br><span class="line">        int myticket = ticketNum.getAndIncrement();</span><br><span class="line">        LOCAL.set(myticket);</span><br><span class="line">        while (myticket != serviceNum.get()) &#123;			//在这里还使用了CAS方法</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="阻塞锁"><a href="#阻塞锁" class="headerlink" title="阻塞锁"></a>阻塞锁</h3><p>​    阻塞锁指的是让线程进入阻塞状态进行等待，当获得相应的通知的时候唤醒进程，就绪状态的所有线程通过竞争的方式进入运行状态。<br>    在Java中，重量级锁、ReentrantLock都包含阻塞锁的实现。阻塞锁相对于自旋锁来说，降低了CPU的使用率，但是效率不一定比自旋锁高，因为线程的唤醒进入时间以及回复时间都比自旋锁慢。<br>    在竞争激烈的情况下 阻塞锁的性能要明显高于 自旋锁。理想的情况是; 在线程竞争不激烈的情况下，使用自旋锁，竞争激烈的情况下使用，阻塞锁。</p>
+<h3 id="可重入锁"><a href="#可重入锁" class="headerlink" title="可重入锁"></a>可重入锁</h3><p>​    可重入锁是指能够重进入的锁，表示一个锁能够支持线程对一个资源的重复加锁。可重入锁有公平锁和非公平锁的实现。<br>    可重入锁中，通过维护一个计数器，来描述持有该锁的线程已经持有了多少次锁，每一次加锁都对应着一次解锁操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">可重入锁的实现：</span><br><span class="line">final boolean nonfairTryAcquire(int acquires) &#123;</span><br><span class="line">            final Thread current = Thread.currentThread();</span><br><span class="line">            int c = getState();</span><br><span class="line">            if (c == 0) &#123;</span><br><span class="line">                if (compareAndSetState(0, acquires)) &#123;</span><br><span class="line">                    setExclusiveOwnerThread(current);</span><br><span class="line">                    return true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            else if (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">                int nextc = c + acquires;</span><br><span class="line">                if (nextc &lt; 0) // overflow</span><br><span class="line">                    throw new Error(&quot;Maximum lock count exceeded&quot;);</span><br><span class="line">                setState(nextc);</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="公平锁和非公平锁"><a href="#公平锁和非公平锁" class="headerlink" title="公平锁和非公平锁"></a>公平锁和非公平锁</h3><p>​    公平性与否是针对获取锁而言的，如果一个锁是公平的，那么锁的获取顺序就应该符合请求的绝对时间顺序，也就是FIFO。而对于非公平锁，只要CAS能够设置同步状态成功，那么表示当前线程获取了锁。<br>    在Java中，ReentrantLock分别实现了公平锁和非公平锁。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">公平锁的实现：hasQueuedPredecessors()方法用于检查等待队列中有没有元素。</span><br><span class="line">if (!hasQueuedPredecessors() &amp;&amp;</span><br><span class="line">    compareAndSetState(0, acquires)) &#123;</span><br><span class="line">    setExclusiveOwnerThread(current);</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br><span class="line">非公平锁的实现：</span><br><span class="line">if (c == 0) &#123;</span><br><span class="line">    if (compareAndSetState(0, acquires)) &#123;</span><br><span class="line">        setExclusiveOwnerThread(current);</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="共享锁和独占锁"><a href="#共享锁和独占锁" class="headerlink" title="共享锁和独占锁"></a>共享锁和独占锁</h3><p>​    独占锁指每次只能有一个线程能够持有锁，ReentrantLock就是以独占方式实现的互斥锁。共享锁，允许读个线程同时持有锁，并发的访问共享资源，ReadWriteLock中的readLock就是一种共享锁的实现。</p>
+<h5 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h5><p>​    读写锁是Java对于处于读和写两种不同状态下的并发提供的一种锁。读写锁维护了两个锁：读锁和写锁，通过分离读锁和写锁，使得并发性相较于其他的独占锁有了提升。读写锁也是可以选择实现公平锁或者非公平锁。<br>    当有一个线程持有读锁的时候，如果有其他线程想要获得锁，那么便能够获得锁，此时维护的是一个共享锁，并且这个共享锁是支持重进入的。如果线程获取读锁的时候，已经有其他线程获取了写锁，那么这个线程将会进入等待状态。而写锁只有在没有任何线程访问的时候才能够获得，实质上是一个排它锁。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">写锁实现：</span><br><span class="line">protected final boolean tryAcquire(int acquires) &#123;</span><br><span class="line">            Thread current = Thread.currentThread();</span><br><span class="line">            int c = getState();</span><br><span class="line">            int w = exclusiveCount(c);</span><br><span class="line">            if (c != 0) &#123;</span><br><span class="line">                // (Note: if c != 0 and w == 0 then shared count != 0)</span><br><span class="line">                if (w == 0 || current != getExclusiveOwnerThread())</span><br><span class="line">                    return false;</span><br><span class="line">                if (w + exclusiveCount(acquires) &gt; MAX_COUNT)</span><br><span class="line">                    throw new Error(&quot;Maximum lock count exceeded&quot;);</span><br><span class="line">                // Reentrant acquire</span><br><span class="line">                setState(c + acquires);</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">            if (writerShouldBlock() ||</span><br><span class="line">                !compareAndSetState(c, c + acquires))</span><br><span class="line">                return false;</span><br><span class="line">            setExclusiveOwnerThread(current);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">读锁的实现：</span><br><span class="line">protected final int tryAcquireShared(int unused) &#123;</span><br><span class="line">            Thread current = Thread.currentThread();</span><br><span class="line">            int c = getState();</span><br><span class="line">            if (exclusiveCount(c) != 0 &amp;&amp;</span><br><span class="line">                getExclusiveOwnerThread() != current)</span><br><span class="line">                return -1;</span><br><span class="line">            int r = sharedCount(c);</span><br><span class="line">            if (!readerShouldBlock() &amp;&amp;</span><br><span class="line">                r &lt; MAX_COUNT &amp;&amp;</span><br><span class="line">                compareAndSetState(c, c + SHARED_UNIT)) &#123;</span><br><span class="line">                if (r == 0) &#123;</span><br><span class="line">                    firstReader = current;</span><br><span class="line">                    firstReaderHoldCount = 1;</span><br><span class="line">                &#125; else if (firstReader == current) &#123;</span><br><span class="line">                    firstReaderHoldCount++;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    HoldCounter rh = cachedHoldCounter;</span><br><span class="line">                    if (rh == null ||</span><br><span class="line">                        rh.tid != LockSupport.getThreadId(current))</span><br><span class="line">                        cachedHoldCounter = rh = readHolds.get();</span><br><span class="line">                    else if (rh.count == 0)</span><br><span class="line">                        readHolds.set(rh);</span><br><span class="line">                    rh.count++;</span><br><span class="line">                &#125;</span><br><span class="line">                return 1;</span><br><span class="line">            &#125;</span><br><span class="line">            return fullTryAcquireShared(current);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="分段锁"><a href="#分段锁" class="headerlink" title="分段锁"></a>分段锁</h3><p>​    分段锁是在HashMap中的一个实现。HashTable容器在竞争激烈的并发环境中的时候，由于线程会竞争统一把锁，所以会导致效率低下。所以在容器里假设有多把锁，每把锁用于锁容器中的一部分数据，当不同的线程访问不同的数据的时候，就会持有不同的锁，降低了锁竞争的现象，有效的提高并发效率，这种方法就是CurrentHashMap的锁分段技术，将数据分为一段一段的存储，一段数据具有一把锁，一个线程占有一把锁的时候，并不影响其他线程访问其他数据段。</p>
+<h3 id="偏向锁、轻量级锁、重量级锁"><a href="#偏向锁、轻量级锁、重量级锁" class="headerlink" title="偏向锁、轻量级锁、重量级锁"></a>偏向锁、轻量级锁、重量级锁</h3><p>​    在synchronized一文中，我简单的提到了这三种锁，我将在一篇文章里详细的介绍这三种锁：<a href="http://langxiaokai.top/2018/04/15/%E5%81%8F%E5%90%91%E9%94%81%E3%80%81%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81%E3%80%81%E9%87%8D%E9%87%8F%E7%BA%A7%E9%94%81/" target="_blank" rel="noopener"> 偏向锁、轻量级锁、重量级锁</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/15/Java中的锁/" data-id="cjjmji7g90005dnmccxpveggz" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/锁/">锁</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/15/偏向锁、轻量级锁、重量级锁/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          偏向锁、轻量级锁、重量级锁
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/14/Java中的并发/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Java中的并发 </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

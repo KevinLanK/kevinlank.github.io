@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Java的全新关键字-default | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Java的全新关键字-default​    有在读Jdk9的持有对象源代码，然后读到了Iterator.java文件，接口中定义了四个方法： 1234boolean hasNext()E next()default void remove()&amp;#123;&amp;#125;default void forEachRemaining()&amp;#123;&amp;#125; ​    在接口的方法定义中发现了一个关键字">
+<meta name="keywords" content="Java,Java新特性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java的全新关键字-default">
+<meta property="og:url" content="http://yoursite.com/2018/03/11/Java的全新关键字-default/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java的全新关键字-default​    有在读Jdk9的持有对象源代码，然后读到了Iterator.java文件，接口中定义了四个方法： 1234boolean hasNext()E next()default void remove()&amp;#123;&amp;#125;default void forEachRemaining()&amp;#123;&amp;#125; ​    在接口的方法定义中发现了一个关键字">
+<meta property="og:image" content="http://yoursite.com/2018/03/11/Java的全新关键字-default/1494939783.jpg">
+<meta property="og:updated_time" content="2018-07-15T07:26:40.562Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java的全新关键字-default">
+<meta name="twitter:description" content="Java的全新关键字-default​    有在读Jdk9的持有对象源代码，然后读到了Iterator.java文件，接口中定义了四个方法： 1234boolean hasNext()E next()default void remove()&amp;#123;&amp;#125;default void forEachRemaining()&amp;#123;&amp;#125; ​    在接口的方法定义中发现了一个关键字">
+<meta name="twitter:image" content="http://yoursite.com/2018/03/11/Java的全新关键字-default/1494939783.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java的全新关键字-default" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/11/Java的全新关键字-default/" class="article-date">
+  <time datetime="2018-03-11T06:36:59.000Z" itemprop="datePublished">2018-03-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java的全新关键字-default
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java的全新关键字-default"><a href="#Java的全新关键字-default" class="headerlink" title="Java的全新关键字-default"></a>Java的全新关键字-default</h1><p>​    有在读Jdk9的持有对象源代码，然后读到了Iterator.java文件，接口中定义了四个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">boolean hasNext()</span><br><span class="line">E next()</span><br><span class="line">default void remove()&#123;&#125;</span><br><span class="line">default void forEachRemaining()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>​    在接口的方法定义中发现了一个关键字：default，并不能理解这个关键字，然后去百度查了一下定义。</p>
+<p><a id="more"></a>    接口允许确定方法名、参数列表和返回类型，但是没有任何方法体。接口只提供了形式，而未提供任何具体实现(Think  in java)，在《Think in  Java》一书的描述中，JavaSE5中对接口的限定是非常明确的。在java8中，引入了新的概念default方法，也可以成为Defender方法，或者虚拟扩展方法。<br>    Default方法是指，在接口内部包含了一些默认的方法实现（也就是接口中可以包含方法体，这打破了Java之前版本对接口的语法限制），从而使得接口在进行扩展的时候，不会破坏与接口相关的实现类代码。(Default  methods enable you to add new functionality to the interfaces of your  libraries and ensure binary compatibility with code written for older  versions of those interfaces.)<br>    诚然，这个关键字真正的给后期维护在扩展接口时候提供了非常强的帮助。但是，Java坚持了这么多年的通过接口来防止多重继承容易造成二义性这一回事，因为这个关键字，转了一圈又回来了。<img src="/2018/03/11/Java的全新关键字-default/1494939783.jpg" alt="img"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/11/Java的全新关键字-default/" data-id="cjjmji7gl000fdnmcjesv5w3i" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java新特性/">Java新特性</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/11/接口和抽象类/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          接口和抽象类
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/09/Java多态/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Java多态</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>AQS | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="AQS​    在Java中，对于锁的默认实现是synchronized实现的加锁和解锁，而在JDK1.5之后Java中实现了ReentrantLock，ReentrantLock是当内置加锁机制不适用的时候，作为一种可以选择的高级功能。    构建ReentrantLock的时候，采用了AQS(AbstractQueuedSynchronized)，也就是队列同步器作为基础框架。 Abstrac">
+<meta name="keywords" content="Java,源码解读,并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AQS">
+<meta property="og:url" content="http://yoursite.com/2018/04/17/AQS/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="AQS​    在Java中，对于锁的默认实现是synchronized实现的加锁和解锁，而在JDK1.5之后Java中实现了ReentrantLock，ReentrantLock是当内置加锁机制不适用的时候，作为一种可以选择的高级功能。    构建ReentrantLock的时候，采用了AQS(AbstractQueuedSynchronized)，也就是队列同步器作为基础框架。 Abstrac">
+<meta property="og:updated_time" content="2018-07-15T07:45:48.755Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AQS">
+<meta name="twitter:description" content="AQS​    在Java中，对于锁的默认实现是synchronized实现的加锁和解锁，而在JDK1.5之后Java中实现了ReentrantLock，ReentrantLock是当内置加锁机制不适用的时候，作为一种可以选择的高级功能。    构建ReentrantLock的时候，采用了AQS(AbstractQueuedSynchronized)，也就是队列同步器作为基础框架。 Abstrac">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-AQS" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/17/AQS/" class="article-date">
+  <time datetime="2018-04-17T07:45:13.000Z" itemprop="datePublished">2018-04-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      AQS
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="AQS"><a href="#AQS" class="headerlink" title="AQS"></a>AQS</h1><p>​    在Java中，对于锁的默认实现是synchronized实现的加锁和解锁，而在JDK1.5之后Java中实现了ReentrantLock，ReentrantLock是当内置加锁机制不适用的时候，作为一种可以选择的高级功能。<br>    构建ReentrantLock的时候，采用了AQS(AbstractQueuedSynchronized)，也就是队列同步器作为基础框架。</p>
+<h4 id="AbstractQueuedSynchronized"><a href="#AbstractQueuedSynchronized" class="headerlink" title="AbstractQueuedSynchronized"></a>AbstractQueuedSynchronized</h4><p>​    AbstractQueuedSynchronized是一个用来构建缩合同步组件的基础框架，它是一个高度抽象的类，除去ReentrantLock外，ReentrantReadWriteLock和CountDownLatch等一些不同类型的同步组件也是基于AQS实现的。AQS中使用了一个int类型的成员变量来表示同步状态，并且通过内置的FIFO队列来实现资源获取线程的排队动作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">state变量：</span><br><span class="line">    private volatile int state;</span><br><span class="line">    protected final int getState() &#123;</span><br><span class="line">        return state;</span><br><span class="line">    &#125;</span><br><span class="line">    protected final void setState(int newState) &#123;</span><br><span class="line">        state = newState;</span><br><span class="line">    &#125;</span><br><span class="line">    protected final boolean compareAndSetState(int expect, int update) &#123;</span><br><span class="line">        return STATE.compareAndSet(this, expect, update);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>​    AQS定义了一个volatile的int类型的表示同步状态变量，提供了同步状态的访问和修改方法：</p>
+<blockquote>
+<p>getState():获取当前的同步状态<br>setState(int newState):设置当前的同步状态<br>compareAndSetState(int expect,int update):使用CAS设置当前状态，这种方法能够保证状态的原子性</p>
+</blockquote>
+<p>​    AQS还提供了可以重写的许多方法以及模板方法：</p>
+<p><code>可重写方法：</code></p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>protected boolean tryAcquire(int arg)</td>
+<td>独占式获取同步状态，实现方法查询当前状态并判断同步状态是否符合预期，使用CAS进行同步状态的设置</td>
+</tr>
+<tr>
+<td>protected boolean tryRelease(int arg)</td>
+<td>独占式释放同步状态，等待获取状态的线程将有机会获取同步状态</td>
+</tr>
+<tr>
+<td>protected int tryAcquireShared(int arg)</td>
+<td>共享式获得同步状态</td>
+</tr>
+<tr>
+<td>protected boolean tryReleaseShared(int arg)</td>
+<td>共享式释放同步状态</td>
+</tr>
+<tr>
+<td>protected boolean isHeldExclusively()</td>
+<td>判断同步器是否在独占模式下被线程占用</td>
+</tr>
+</tbody>
+</table>
+<p><code>模板方法：</code></p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>public final void acquire(int arg)</td>
+<td>抢占式获取同步状态</td>
+</tr>
+<tr>
+<td>public final void acquireInterruptibly(int arg)</td>
+<td>响应中断的抢占式获取同步状态</td>
+</tr>
+<tr>
+<td>public final boolean tryAcquireNanos(int arg, long nanosTimeout)</td>
+<td>在acquireInterruptibly的基础上加入超时时间，在时间内获取到锁才成功</td>
+</tr>
+<tr>
+<td>public final boolean release(int arg)</td>
+<td>独占式释放同步状态，当释放成功之后，会唤醒在同步队列中的第一个节点中的线程</td>
+</tr>
+<tr>
+<td>public final boolean releaseShared(int arg)</td>
+<td>共享式的释放同步状态</td>
+</tr>
+<tr>
+<td>public final void acquireShared(int arg)</td>
+<td>共享式的获取同步状态，在同一时刻内能够有多个线程获取到同步状态</td>
+</tr>
+<tr>
+<td>public final void acquireSharedInterruptibly(int arg)</td>
+<td>响应中断的共享获取同步状态</td>
+</tr>
+<tr>
+<td>public final boolean tryAcquireSharedNanos(int arg, long nanosTimeout)</td>
+<td>在响应中断的共享获取同步状态的基础上加入超时时间</td>
+</tr>
+<tr>
+<td>public final Collection getSharedQueuedThreads()</td>
+<td>获取在同步队列上的线程的集合</td>
+</tr>
+</tbody>
+</table>
+<h4 id="同步队列"><a href="#同步队列" class="headerlink" title="同步队列"></a>同步队列</h4><p>​    AQS通过在内部维护一个同步队列来实现多个线程对同一个资源访问情况下的线程状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">AQS中同步队列的实现：</span><br><span class="line">static final class Node &#123;</span><br><span class="line">        static final Node SHARED = new Node();</span><br><span class="line">        static final Node EXCLUSIVE = null;</span><br><span class="line">        static final int CANCELLED =  1;</span><br><span class="line">        static final int SIGNAL    = -1;</span><br><span class="line">        static final int CONDITION = -2;</span><br><span class="line">        static final int PROPAGATE = -3;</span><br><span class="line">        volatile int waitStatus;</span><br><span class="line">        volatile Node prev;</span><br><span class="line">        volatile Node next;</span><br><span class="line">        volatile Thread thread;</span><br><span class="line">        Node nextWaiter;</span><br><span class="line">        final boolean isShared() &#123;</span><br><span class="line">            return nextWaiter == SHARED;</span><br><span class="line">        &#125;</span><br><span class="line">        final Node predecessor() throws NullPointerException &#123;</span><br><span class="line">            Node p = prev;</span><br><span class="line">            if (p == null)</span><br><span class="line">                throw new NullPointerException();</span><br><span class="line">            else</span><br><span class="line">                return p;</span><br><span class="line">        &#125;</span><br><span class="line">        Node() &#123;&#125;</span><br><span class="line">        Node(Node nextWaiter) &#123;</span><br><span class="line">            this.nextWaiter = nextWaiter;</span><br><span class="line">            THREAD.set(this, Thread.currentThread());</span><br><span class="line">        &#125;</span><br><span class="line">        Node(int waitStatus) &#123;</span><br><span class="line">            WAITSTATUS.set(this, waitStatus);</span><br><span class="line">            THREAD.set(this, Thread.currentThread());</span><br><span class="line">        &#125;</span><br><span class="line">        final boolean compareAndSetWaitStatus(int expect, int update) &#123;</span><br><span class="line">            return WAITSTATUS.compareAndSet(this, expect, update);</span><br><span class="line">        &#125;</span><br><span class="line">        final boolean compareAndSetNext(Node expect, Node update) &#123;</span><br><span class="line">            return NEXT.compareAndSet(this, expect, update);</span><br><span class="line">        &#125;</span><br><span class="line">        final void setPrevRelaxed(Node p) &#123;</span><br><span class="line">            PREV.set(this, p);</span><br><span class="line">        &#125;</span><br><span class="line">        private static final VarHandle NEXT;</span><br><span class="line">        private static final VarHandle PREV;</span><br><span class="line">        private static final VarHandle THREAD;</span><br><span class="line">        private static final VarHandle WAITSTATUS;</span><br><span class="line">        static &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                MethodHandles.Lookup l = MethodHandles.lookup();</span><br><span class="line">                NEXT = l.findVarHandle(Node.class, &quot;next&quot;, Node.class);</span><br><span class="line">                PREV = l.findVarHandle(Node.class, &quot;prev&quot;, Node.class);</span><br><span class="line">                THREAD = l.findVarHandle(Node.class, &quot;thread&quot;, Thread.class);</span><br><span class="line">                WAITSTATUS = l.findVarHandle(Node.class, &quot;waitStatus&quot;, int.class);</span><br><span class="line">            &#125; catch (ReflectiveOperationException e) &#123;</span><br><span class="line">                throw new Error(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>​    在同步队列里面，waitStatus为线程的等待状态，包括了这样几种情况：</p>
+<blockquote>
+<p>CANCELLED，值为1，线程从同步队列中取消等待<br>SIGNAL，值为-1，后继节点的线程处于等待状态<br>CONDITION，值为-2，节点等待在Condition上，等待其他线程对Condition的调用，进而进入到同步队列<br>PROPAGATE，值为-3，笑一次共享式同步状态会无条件地被传播下去<br>INITIAL，值为0，表示初始状态</p>
+</blockquote>
+<p>​    在同步队列中，包含了两个节点类型的引用：头节点和尾节点。添加尾节点通过CAS添加，只有当前节点符合预期才会添加进去，并且尾节点引用指向队列的尾节点。<br>    同步队列遵循FIFO，也就是先到达同步队列的线程将优先得到同步状态，当头节点释放同步状态之后，将会唤醒在同步队列中等待的下一个节点的线程，并且当后继节点在获取同步状态成功后会把自己设置为头节点。<br>    再同步队列中的线程会采用自旋的方式来判断自己是否能够获取到同步状态，判断的方式是只有判断前驱节点是头节点的情况下才开始自旋获取同步状态，否则节点中的线程将会进入等待状态。并且通过只有前驱节点是头节点，才尝试获取同步状态，只有成功以后才会把自己设置为头节点，这样提供了并发条件下出现竞争的安全。<br>    共享式获取同步状态或者释放同步状态的情况即读写锁的情况：只有在存在读锁或者不上锁的情况下，读锁的申请才会成功，而只有不上锁的时候写锁才能够获取成功。并且在Java中，ReentrantReadWriteLock的实现就是通过AQS来实现的。<br>    在独占式超时获取同步状态的时候，需要判断当前自旋时间是否超过超时等待时间，如果已经超过，那么获取同步状态就不会成功，否则在未超时的时候同获取独占式同步状态。</p>
+<h4 id="Codition"><a href="#Codition" class="headerlink" title="Codition"></a>Codition</h4><p>​    除去维护一个同步队列，AQS还维护一个Codition（等待队列）来存储等待状态的线程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br></pre></td><td class="code"><pre><span class="line">public class ConditionObject implements Condition, java.io.Serializable &#123;</span><br><span class="line">        private static final long serialVersionUID = 1173984872572414699L;</span><br><span class="line">        private transient Node firstWaiter;</span><br><span class="line">        private transient Node lastWaiter;</span><br><span class="line">        public ConditionObject() &#123; &#125;</span><br><span class="line">        private Node addConditionWaiter() &#123;</span><br><span class="line">            Node t = lastWaiter;</span><br><span class="line">            if (t != null &amp;&amp; t.waitStatus != Node.CONDITION) &#123;</span><br><span class="line">                unlinkCancelledWaiters();</span><br><span class="line">                t = lastWaiter;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Node node = new Node(Node.CONDITION);</span><br><span class="line"></span><br><span class="line">            if (t == null)</span><br><span class="line">                firstWaiter = node;</span><br><span class="line">            else</span><br><span class="line">                t.nextWaiter = node;</span><br><span class="line">            lastWaiter = node;</span><br><span class="line">            return node;</span><br><span class="line">        &#125;</span><br><span class="line">        private void doSignal(Node first) &#123;</span><br><span class="line">            do &#123;</span><br><span class="line">                if ( (firstWaiter = first.nextWaiter) == null)</span><br><span class="line">                    lastWaiter = null;</span><br><span class="line">                first.nextWaiter = null;</span><br><span class="line">            &#125; while (!transferForSignal(first) &amp;&amp;</span><br><span class="line">                     (first = firstWaiter) != null);</span><br><span class="line">        &#125;</span><br><span class="line">        private void doSignalAll(Node first) &#123;</span><br><span class="line">            lastWaiter = firstWaiter = null;</span><br><span class="line">            do &#123;</span><br><span class="line">                Node next = first.nextWaiter;</span><br><span class="line">                first.nextWaiter = null;</span><br><span class="line">                transferForSignal(first);</span><br><span class="line">                first = next;</span><br><span class="line">            &#125; while (first != null);</span><br><span class="line">        &#125;</span><br><span class="line">        private void unlinkCancelledWaiters() &#123;</span><br><span class="line">            Node t = firstWaiter;</span><br><span class="line">            Node trail = null;</span><br><span class="line">            while (t != null) &#123;</span><br><span class="line">                Node next = t.nextWaiter;</span><br><span class="line">                if (t.waitStatus != Node.CONDITION) &#123;</span><br><span class="line">                    t.nextWaiter = null;</span><br><span class="line">                    if (trail == null)</span><br><span class="line">                        firstWaiter = next;</span><br><span class="line">                    else</span><br><span class="line">                        trail.nextWaiter = next;</span><br><span class="line">                    if (next == null)</span><br><span class="line">                        lastWaiter = trail;</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                    trail = t;</span><br><span class="line">                t = next;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        public final void signal() &#123;</span><br><span class="line">            if (!isHeldExclusively())</span><br><span class="line">                throw new IllegalMonitorStateException();</span><br><span class="line">            Node first = firstWaiter;</span><br><span class="line">            if (first != null)</span><br><span class="line">                doSignal(first);</span><br><span class="line">        &#125;</span><br><span class="line">        public final void signalAll() &#123;</span><br><span class="line">            if (!isHeldExclusively())</span><br><span class="line">                throw new IllegalMonitorStateException();</span><br><span class="line">            Node first = firstWaiter;</span><br><span class="line">            if (first != null)</span><br><span class="line">                doSignalAll(first);</span><br><span class="line">        &#125;</span><br><span class="line">        public final void awaitUninterruptibly() &#123;</span><br><span class="line">            Node node = addConditionWaiter();</span><br><span class="line">            int savedState = fullyRelease(node);</span><br><span class="line">            boolean interrupted = false;</span><br><span class="line">            while (!isOnSyncQueue(node)) &#123;</span><br><span class="line">                LockSupport.park(this);</span><br><span class="line">                if (Thread.interrupted())</span><br><span class="line">                    interrupted = true;</span><br><span class="line">            &#125;</span><br><span class="line">            if (acquireQueued(node, savedState) || interrupted)</span><br><span class="line">                selfInterrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        private static final int REINTERRUPT =  1;</span><br><span class="line">        private static final int THROW_IE    = -1;</span><br><span class="line">        private int checkInterruptWhileWaiting(Node node) &#123;</span><br><span class="line">            return Thread.interrupted() ?</span><br><span class="line">                (transferAfterCancelledWait(node) ? THROW_IE : REINTERRUPT) :</span><br><span class="line">                0;</span><br><span class="line">        &#125;</span><br><span class="line">        private void reportInterruptAfterWait(int interruptMode)</span><br><span class="line">            throws InterruptedException &#123;</span><br><span class="line">            if (interruptMode == THROW_IE)</span><br><span class="line">                throw new InterruptedException();</span><br><span class="line">            else if (interruptMode == REINTERRUPT)</span><br><span class="line">                selfInterrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        public final void await() throws InterruptedException &#123;</span><br><span class="line">            if (Thread.interrupted())</span><br><span class="line">                throw new InterruptedException();</span><br><span class="line">            Node node = addConditionWaiter();</span><br><span class="line">            int savedState = fullyRelease(node);</span><br><span class="line">            int interruptMode = 0;</span><br><span class="line">            while (!isOnSyncQueue(node)) &#123;</span><br><span class="line">                LockSupport.park(this);</span><br><span class="line">                if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)</span><br><span class="line">                    break;</span><br><span class="line">            &#125;</span><br><span class="line">            if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)</span><br><span class="line">                interruptMode = REINTERRUPT;</span><br><span class="line">            if (node.nextWaiter != null) </span><br><span class="line">                unlinkCancelledWaiters();</span><br><span class="line">            if (interruptMode != 0)</span><br><span class="line">                reportInterruptAfterWait(interruptMode);</span><br><span class="line">        &#125;</span><br><span class="line">        public final long awaitNanos(long nanosTimeout)</span><br><span class="line">                throws InterruptedException &#123;</span><br><span class="line">            if (Thread.interrupted())</span><br><span class="line">                throw new InterruptedException();</span><br><span class="line">            final long deadline = System.nanoTime() + nanosTimeout;</span><br><span class="line">            long initialNanos = nanosTimeout;</span><br><span class="line">            Node node = addConditionWaiter();</span><br><span class="line">            int savedState = fullyRelease(node);</span><br><span class="line">            int interruptMode = 0;</span><br><span class="line">            while (!isOnSyncQueue(node)) &#123;</span><br><span class="line">                if (nanosTimeout &lt;= 0L) &#123;</span><br><span class="line">                    transferAfterCancelledWait(node);</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                if (nanosTimeout &gt; SPIN_FOR_TIMEOUT_THRESHOLD)</span><br><span class="line">                    LockSupport.parkNanos(this, nanosTimeout);</span><br><span class="line">                if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)</span><br><span class="line">                    break;</span><br><span class="line">                nanosTimeout = deadline - System.nanoTime();</span><br><span class="line">            &#125;</span><br><span class="line">            if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)</span><br><span class="line">                interruptMode = REINTERRUPT;</span><br><span class="line">            if (node.nextWaiter != null)</span><br><span class="line">                unlinkCancelledWaiters();</span><br><span class="line">            if (interruptMode != 0)</span><br><span class="line">                reportInterruptAfterWait(interruptMode);</span><br><span class="line">            long remaining = deadline - System.nanoTime();</span><br><span class="line">            return (remaining &lt;= initialNanos) ? remaining : Long.MIN_VALUE;</span><br><span class="line">        &#125;</span><br><span class="line">        public final boolean awaitUntil(Date deadline)</span><br><span class="line">                throws InterruptedException &#123;</span><br><span class="line">            long abstime = deadline.getTime();</span><br><span class="line">            if (Thread.interrupted())</span><br><span class="line">                throw new InterruptedException();</span><br><span class="line">            Node node = addConditionWaiter();</span><br><span class="line">            int savedState = fullyRelease(node);</span><br><span class="line">            boolean timedout = false;</span><br><span class="line">            int interruptMode = 0;</span><br><span class="line">            while (!isOnSyncQueue(node)) &#123;</span><br><span class="line">                if (System.currentTimeMillis() &gt;= abstime) &#123;</span><br><span class="line">                    timedout = transferAfterCancelledWait(node);</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                LockSupport.parkUntil(this, abstime);</span><br><span class="line">                if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)</span><br><span class="line">                    break;</span><br><span class="line">            &#125;</span><br><span class="line">            if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)</span><br><span class="line">                interruptMode = REINTERRUPT;</span><br><span class="line">            if (node.nextWaiter != null)</span><br><span class="line">                unlinkCancelledWaiters();</span><br><span class="line">            if (interruptMode != 0)</span><br><span class="line">                reportInterruptAfterWait(interruptMode);</span><br><span class="line">            return !timedout;</span><br><span class="line">        &#125;</span><br><span class="line">        public final boolean await(long time, TimeUnit unit)</span><br><span class="line">                throws InterruptedException &#123;</span><br><span class="line">            long nanosTimeout = unit.toNanos(time);</span><br><span class="line">            if (Thread.interrupted())</span><br><span class="line">                throw new InterruptedException();</span><br><span class="line">            final long deadline = System.nanoTime() + nanosTimeout;</span><br><span class="line">            Node node = addConditionWaiter();</span><br><span class="line">            int savedState = fullyRelease(node);</span><br><span class="line">            boolean timedout = false;</span><br><span class="line">            int interruptMode = 0;</span><br><span class="line">            while (!isOnSyncQueue(node)) &#123;</span><br><span class="line">                if (nanosTimeout &lt;= 0L) &#123;</span><br><span class="line">                    timedout = transferAfterCancelledWait(node);</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                if (nanosTimeout &gt; SPIN_FOR_TIMEOUT_THRESHOLD)</span><br><span class="line">                    LockSupport.parkNanos(this, nanosTimeout);</span><br><span class="line">                if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)</span><br><span class="line">                    break;</span><br><span class="line">                nanosTimeout = deadline - System.nanoTime();</span><br><span class="line">            &#125;</span><br><span class="line">            if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)</span><br><span class="line">                interruptMode = REINTERRUPT;</span><br><span class="line">            if (node.nextWaiter != null)</span><br><span class="line">                unlinkCancelledWaiters();</span><br><span class="line">            if (interruptMode != 0)</span><br><span class="line">                reportInterruptAfterWait(interruptMode);</span><br><span class="line">            return !timedout;</span><br><span class="line">        &#125;</span><br><span class="line">        final boolean isOwnedBy(AbstractQueuedSynchronizer sync) &#123;</span><br><span class="line">            return sync == AbstractQueuedSynchronizer.this;</span><br><span class="line">        &#125;</span><br><span class="line">        protected final boolean hasWaiters() &#123;</span><br><span class="line">            if (!isHeldExclusively())</span><br><span class="line">                throw new IllegalMonitorStateException();</span><br><span class="line">            for (Node w = firstWaiter; w != null; w = w.nextWaiter) &#123;</span><br><span class="line">                if (w.waitStatus == Node.CONDITION)</span><br><span class="line">                    return true;</span><br><span class="line">            &#125;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        protected final int getWaitQueueLength() &#123;</span><br><span class="line">            if (!isHeldExclusively())</span><br><span class="line">                throw new IllegalMonitorStateException();</span><br><span class="line">            int n = 0;</span><br><span class="line">            for (Node w = firstWaiter; w != null; w = w.nextWaiter) &#123;</span><br><span class="line">                if (w.waitStatus == Node.CONDITION)</span><br><span class="line">                    ++n;</span><br><span class="line">            &#125;</span><br><span class="line">            return n;</span><br><span class="line">        &#125;</span><br><span class="line">        protected final Collection&lt;Thread&gt; getWaitingThreads() &#123;</span><br><span class="line">            if (!isHeldExclusively())</span><br><span class="line">                throw new IllegalMonitorStateException();</span><br><span class="line">            ArrayList&lt;Thread&gt; list = new ArrayList&lt;&gt;();</span><br><span class="line">            for (Node w = firstWaiter; w != null; w = w.nextWaiter) &#123;</span><br><span class="line">                if (w.waitStatus == Node.CONDITION) &#123;</span><br><span class="line">                    Thread t = w.thread;</span><br><span class="line">                    if (t != null)</span><br><span class="line">                        list.add(t);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            return list;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>​    等待队列也是一个FIFO队列，在每个节点上包括了一个线程的引用，这个引用是在Codition对象上等待的线程，当有一个线程调用了Codition对象的await()方法，那么这个线程将会释放锁，构造更节点并且进入等待队列。<br>    跟同步队列不同的是，在等待队列中，每个节点只是存储下一个节点的引用，而不存储前驱节点的引用。添加一个尾节点需要将当前尾节点的引用指向添加节点，并且在Condition里将尾节点修改。更新过程是由锁保证的，并不需要CAS进行更新。<br>    当调用Codition的signal()方法时，会在唤醒首节点前，将节点移到同步队列。而调用signalAll()方法会将整个等待队列中的节点移到同步队列中。</p>
+<h3 id="Codition和Object的监视器模型"><a href="#Codition和Object的监视器模型" class="headerlink" title="Codition和Object的监视器模型"></a>Codition和Object的监视器模型</h3><p>​    在Object中，存在默认的监视器，即wait()、notify()和notifyALl()方法构成。在监视器模型中。一个对象拥有一个同步队列和等待队列，而在AQS中，可以拥有一个同步队列和多个等待队列，通过这种方式将等待的线程可以按照条件进行区分，即不满足不同条件的线程存储在不同的等待队列中。并且Codition可以精确的控制多个线程的休眠和唤醒。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/17/AQS/" data-id="cjjmji7g00001dnmccb601h8x" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码解读/">源码解读</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          可重入锁ReentrantLock和读写锁ReentrantReadWriteLock 
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/16/TCP连接的建立与关闭/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">TCP连接的建立与关闭</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

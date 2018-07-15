@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>有趣的java.util.*List | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="有趣的java.util.*List​    阅读容器的源码，然后读到了一些有意思的东西。">
+<meta name="keywords" content="Java,源码解读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="有趣的java.util.*List">
+<meta property="og:url" content="http://yoursite.com/2018/03/12/有趣的java-util-List/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="有趣的java.util.*List​    阅读容器的源码，然后读到了一些有意思的东西。">
+<meta property="og:image" content="http://yoursite.com/2018/03/12/有趣的java-util-List/20160908114958424.png">
+<meta property="og:updated_time" content="2018-07-15T07:25:52.274Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="有趣的java.util.*List">
+<meta name="twitter:description" content="有趣的java.util.*List​    阅读容器的源码，然后读到了一些有意思的东西。">
+<meta name="twitter:image" content="http://yoursite.com/2018/03/12/有趣的java-util-List/20160908114958424.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-有趣的java-util-List" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/12/有趣的java-util-List/" class="article-date">
+  <time datetime="2018-03-12T07:17:48.000Z" itemprop="datePublished">2018-03-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      有趣的java.util.*List
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="有趣的java-util-List"><a href="#有趣的java-util-List" class="headerlink" title="有趣的java.util.*List"></a>有趣的java.util.*List</h1><p>​    阅读容器的源码，然后读到了一些有意思的东西。</p>
+<a id="more"></a>
+<h4 id="LinkedList-amp-ArrayList的底层关系"><a href="#LinkedList-amp-ArrayList的底层关系" class="headerlink" title="LinkedList&amp;ArrayList的底层关系"></a>LinkedList&amp;ArrayList的底层关系</h4><p>​    先从两个链表的底层实现看，LinkedList是通过继承AbstractSequentialList这个抽象类，实现List、Deque、接口实现的，而ArrayList是直接通过List实现的，所以，从底层实现看，LinkedList实现要更加复杂。</p>
+<p><img src="/2018/03/12/有趣的java-util-List/20160908114958424.png" alt="图片来源：CSDN"></p>
+<h5 id="底层的实现"><a href="#底层的实现" class="headerlink" title="底层的实现"></a>底层的实现</h5><p>​    在ArrayList类的内部，ArrayList构建了一个默认数组，对于有参构造器数组的长度默认为10，对于无参构造器ArrayList构造了一个默认的空的数组来进行实现。<br>    在Linkedlist类的内部，Linkedlist通过构建了一个双链表来进行实现。</p>
+<h4 id="ArrayList的扩容"><a href="#ArrayList的扩容" class="headerlink" title="ArrayList的扩容"></a>ArrayList的扩容</h4><p>​    ArrayList通过一个数组来进行实现，那么数组的优点是能够快速的进行数据检索，但是插入和删除相较Linkedlist更加困难，除此之外，数组的特性也决定了扩容一个数组是非常困难的，然后阅读了一下源码内对于扩容的实现方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">public void ensureCapacity(int minCapacity) &#123;</span><br><span class="line">        if (minCapacity &gt; elementData.length</span><br><span class="line">            &amp;&amp; !(elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span><br><span class="line">                 &amp;&amp; minCapacity &lt;= DEFAULT_CAPACITY)) &#123;</span><br><span class="line">            modCount++;</span><br><span class="line">            grow(minCapacity);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;</span><br><span class="line"></span><br><span class="line">    private Object[] grow(int minCapacity) &#123;</span><br><span class="line">        return elementData = Arrays.copyOf(elementData,</span><br><span class="line">                                           newCapacity(minCapacity));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private Object[] grow() &#123;</span><br><span class="line">        return grow(size + 1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private int newCapacity(int minCapacity) &#123;</span><br><span class="line">        // overflow-conscious code</span><br><span class="line">        int oldCapacity = elementData.length;</span><br><span class="line">        int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);</span><br><span class="line">        if (newCapacity - minCapacity &lt;= 0) &#123;</span><br><span class="line">            if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA)</span><br><span class="line">                return Math.max(DEFAULT_CAPACITY, minCapacity);</span><br><span class="line">            if (minCapacity &lt; 0) // overflow</span><br><span class="line">                throw new OutOfMemoryError();</span><br><span class="line">            return minCapacity;</span><br><span class="line">        &#125;</span><br><span class="line">        return (newCapacity - MAX_ARRAY_SIZE &lt;= 0)</span><br><span class="line">            ? newCapacity</span><br><span class="line">            : hugeCapacity(minCapacity);</span><br><span class="line">    &#125;</span><br><span class="line">    private static int hugeCapacity(int minCapacity) &#123;</span><br><span class="line">        if (minCapacity &lt; 0) // overflow</span><br><span class="line">            throw new OutOfMemoryError();</span><br><span class="line">        return (minCapacity &gt; MAX_ARRAY_SIZE)</span><br><span class="line">            ? Integer.MAX_VALUE</span><br><span class="line">            : MAX_ARRAY_SIZE;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>​    能够看到，ArrayList建立一个新的数组，这个数组的容量通过移位运算扩展为现在数组的1.5倍，然后将原数组复制到新数组之中，在将引用转向原数组来实现扩容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public void add(int index, E element) &#123;</span><br><span class="line">    rangeCheckForAdd(index);</span><br><span class="line">    modCount++;</span><br><span class="line">    final int s;</span><br><span class="line">    Object[] elementData;</span><br><span class="line">    if ((s = size) == (elementData = this.elementData).length)</span><br><span class="line">        elementData = grow();</span><br><span class="line">    System.arraycopy(elementData, index,</span><br><span class="line">                     elementData, index + 1,</span><br><span class="line">                     s - index);</span><br><span class="line">    elementData[index] = element;</span><br><span class="line">    size = s + 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    在实际使用过程中，即添加一个新项，但是新项超出数组上限，然后调用方法进行数组扩容。</p>
+<h4 id="LinkedList的实现-双链表"><a href="#LinkedList的实现-双链表" class="headerlink" title="LinkedList的实现-双链表"></a>LinkedList的实现-双链表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Linkedlist实现：</span><br><span class="line"></span><br><span class="line">	transient int size = 0;</span><br><span class="line"></span><br><span class="line">    transient Node&lt;E&gt; first;</span><br><span class="line"></span><br><span class="line">    transient Node&lt;E&gt; last;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    private static class Node&lt;E&gt; &#123;</span><br><span class="line">        E item;</span><br><span class="line">        Node&lt;E&gt; next;</span><br><span class="line">        Node&lt;E&gt; prev;</span><br><span class="line"></span><br><span class="line">        Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">            this.item = element;</span><br><span class="line">            this.next = next;</span><br><span class="line">            this.prev = prev;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>​    通过阅读源码，能够看到JDK对于LInkedlist的实现是采用了一个双链表，那么问题来了，为什么不采用单链表？我没有能够查找到相关信息，但是通过阅读源码，我发现Linkedlist在查找某一个结点的过程中是通过一种类似于折半查找的方法来进行查找，为什么说类似，是因为这种二分查找只进行一次，也就是在得到结点的位置的时候，通过比较位置的大小和链表的长度，来确定查找的范围。所以，能够推测，在整个链表的查找中，运用这种类似的前后方向不同的查找，所以，Linkedlist采用了双链表作为实现方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Linkedlist查找结点的方法：</span><br><span class="line"> Node&lt;E&gt; node(int index) &#123;</span><br><span class="line">        if (index &lt; (size &gt;&gt; 1)) &#123;</span><br><span class="line">            Node&lt;E&gt; x = first;</span><br><span class="line">            for (int i = 0; i &lt; index; i++)</span><br><span class="line">                x = x.next;</span><br><span class="line">            return x;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            Node&lt;E&gt; x = last;</span><br><span class="line">            for (int i = size - 1; i &gt; index; i--)</span><br><span class="line">                x = x.prev;</span><br><span class="line">            return x;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/12/有趣的java-util-List/" data-id="cjjmji7h6001idnmci2u7cds3" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码解读/">源码解读</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/12/有趣的java.util.List/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          有趣的java.util.*List
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/11/接口和抽象类/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">接口和抽象类</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

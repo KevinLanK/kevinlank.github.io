@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>双轴快排了解一下 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="双轴快排了解一下​    在JDK1.7之前，Java在Arrays类包里使用的排序算法是快速排序，在JDK1.7之后，Arrays仍然使用快速排序，不过是从一般的快排转到了双轴快排。">
+<meta name="keywords" content="Java,双轴快排,算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="双轴快排了解一下">
+<meta property="og:url" content="http://yoursite.com/2018/03/12/双轴快排了解一下/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="双轴快排了解一下​    在JDK1.7之前，Java在Arrays类包里使用的排序算法是快速排序，在JDK1.7之后，Arrays仍然使用快速排序，不过是从一般的快排转到了双轴快排。">
+<meta property="og:updated_time" content="2018-07-15T07:25:40.194Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="双轴快排了解一下">
+<meta name="twitter:description" content="双轴快排了解一下​    在JDK1.7之前，Java在Arrays类包里使用的排序算法是快速排序，在JDK1.7之后，Arrays仍然使用快速排序，不过是从一般的快排转到了双轴快排。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-双轴快排了解一下" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/12/双轴快排了解一下/" class="article-date">
+  <time datetime="2018-03-12T07:18:22.000Z" itemprop="datePublished">2018-03-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      双轴快排了解一下
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="双轴快排了解一下"><a href="#双轴快排了解一下" class="headerlink" title="双轴快排了解一下"></a>双轴快排了解一下</h1><p>​    在JDK1.7之前，Java在Arrays类包里使用的排序算法是快速排序，在JDK1.7之后，Arrays仍然使用快速排序，不过是从一般的快排转到了双轴快排。<br><a id="more"></a></p>
+<h3 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h3><p>​    快速排序是一个非常高效的排序算法，在最有时间时的O(nlogn),在最坏的情况下才是O(n * n)。但是可以通过优化选择轴线的大小，来尽可能的提高算法的效率。<br>    在快速排序算法中，需要选择一个轴线，然后对需要排序的数组从前从后分别遍历，选择出大于轴线的值的数字放到轴线右侧，小于轴线的数字放到轴线左侧，当这一次的数组排序结束之后，进行递归的方法，分别对轴线左侧和右侧的数组进行快排的递归，直到整个数组进行排序结束。<br>    影响快排的一个重要因素是轴线的选择，而在普通快排中，使用三数中值分割法来进行轴线的选择，提高算法效率。</p>
+<h3 id="双轴快排"><a href="#双轴快排" class="headerlink" title="双轴快排"></a>双轴快排</h3><p>​    从JDK1.7起，Java在排序算法中的实现就转换成了双轴快排。<br>    双轴快排，顾名思义，在排序的过程中采用两条轴线进行排序。选取轴线之后，先对轴线进行排序，比较出大小顺序。然后在比较过程中，将小于最小轴线的数字放到左轴线左侧，将大于最大轴线的数字放到右轴线右侧，剩余的放到两条轴线中间。同样的在划分好的三个区域内使用递归的双轴快排来对数组进行排序。<br>    JDK中的实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">static void sort(int[] a, int left, int right,</span><br><span class="line">                     int[] work, int workBase, int workLen) &#123;</span><br><span class="line">        if (right - left &lt; QUICKSORT_THRESHOLD) &#123;</span><br><span class="line">            sort(a, left, right, true);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        int[] run = new int[MAX_RUN_COUNT + 1];</span><br><span class="line">        int count = 0; run[0] = left;</span><br><span class="line">        for (int k = left; k &lt; right; run[count] = k) &#123;</span><br><span class="line">            while (k &lt; right &amp;&amp; a[k] == a[k + 1])</span><br><span class="line">                k++;</span><br><span class="line">            if (k == right) break; </span><br><span class="line">            if (a[k] &lt; a[k + 1]) &#123;</span><br><span class="line">                while (++k &lt;= right &amp;&amp; a[k - 1] &lt;= a[k]);</span><br><span class="line">            &#125; else if (a[k] &gt; a[k + 1]) &#123; // descending</span><br><span class="line">                while (++k &lt;= right &amp;&amp; a[k - 1] &gt;= a[k]);</span><br><span class="line">                for (int lo = run[count] - 1, hi = k; ++lo &lt; --hi; ) &#123;</span><br><span class="line">                    int t = a[lo]; a[lo] = a[hi]; a[hi] = t;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            if (run[count] &gt; left &amp;&amp; a[run[count]] &gt;= a[run[count] - 1]) &#123;</span><br><span class="line">                count--;</span><br><span class="line">            &#125;</span><br><span class="line">            if (++count == MAX_RUN_COUNT) &#123;</span><br><span class="line">                sort(a, left, right, true);</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (count == 0) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125; else if (count == 1 &amp;&amp; run[count] &gt; right) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        right++;</span><br><span class="line">        if (run[count] &lt; right) &#123;</span><br><span class="line">            run[++count] = right;</span><br><span class="line">        &#125;</span><br><span class="line">        byte odd = 0;</span><br><span class="line">        for (int n = 1; (n &lt;&lt;= 1) &lt; count; odd ^= 1);</span><br><span class="line">        int[] b;         </span><br><span class="line">        int ao, bo;          </span><br><span class="line">        int blen = right - left; </span><br><span class="line">        if (work == null || workLen &lt; blen || workBase + blen &gt; work.length) &#123;</span><br><span class="line">            work = new int[blen];</span><br><span class="line">            workBase = 0;</span><br><span class="line">        &#125;</span><br><span class="line">        if (odd == 0) &#123;</span><br><span class="line">            System.arraycopy(a, left, work, workBase, blen);</span><br><span class="line">            b = a;</span><br><span class="line">            bo = 0;</span><br><span class="line">            a = work;</span><br><span class="line">            ao = workBase - left;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            b = work;</span><br><span class="line">            ao = 0;</span><br><span class="line">            bo = workBase - left;</span><br><span class="line">        &#125;</span><br><span class="line">        for (int last; count &gt; 1; count = last) &#123;</span><br><span class="line">            for (int k = (last = 0) + 2; k &lt;= count; k += 2) &#123;</span><br><span class="line">                int hi = run[k], mi = run[k - 1];</span><br><span class="line">                for (int i = run[k - 2], p = i, q = mi; i &lt; hi; ++i) &#123;</span><br><span class="line">                    if (q &gt;= hi || p &lt; mi &amp;&amp; a[p + ao] &lt;= a[q + ao]) &#123;</span><br><span class="line">                        b[i + bo] = a[p++ + ao];</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        b[i + bo] = a[q++ + ao];</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                run[++last] = hi;</span><br><span class="line">            &#125;</span><br><span class="line">            if ((count &amp; 1) != 0) &#123;</span><br><span class="line">                for (int i = right, lo = run[count - 1]; --i &gt;= lo;</span><br><span class="line">                    b[i + bo] = a[i + ao]</span><br><span class="line">                );</span><br><span class="line">                run[++last] = right;</span><br><span class="line">            &#125;</span><br><span class="line">            int[] t = a; a = b; b = t;</span><br><span class="line">            int o = ao; ao = bo; bo = o;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/12/双轴快排了解一下/" data-id="cjjmji7gw000zdnmcyc8fjxyz" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/算法/">算法</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/13/Vector自动增加数组容量的实现/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Vector自动增加数组容量的实现
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/12/有趣的java.util.List/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">有趣的java.util.*List</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>内存屏障 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="内存屏障内存屏障是个啥？​    内存屏障，是计算机CPU在多核时代，通过数据拷贝，将一个处理器的内存状态对其他处理器可见。在百度百科中，内存屏障也被称呼为内存栅栏，内存栅障，屏障指令等。乍一看到内存栅栏这个这个名词，我还以为这个是跟Java栅栏是一个东西，但是实际上两者并不相同。    在执行CPU指令的时候，CPU会对指令进行乱序执行，来优化性能（这一点我在《共享内存模型》一文中有提到过）。而">
+<meta name="keywords" content="并发,内存屏障">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存屏障">
+<meta property="og:url" content="http://yoursite.com/2018/04/11/内存屏障/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="内存屏障内存屏障是个啥？​    内存屏障，是计算机CPU在多核时代，通过数据拷贝，将一个处理器的内存状态对其他处理器可见。在百度百科中，内存屏障也被称呼为内存栅栏，内存栅障，屏障指令等。乍一看到内存栅栏这个这个名词，我还以为这个是跟Java栅栏是一个东西，但是实际上两者并不相同。    在执行CPU指令的时候，CPU会对指令进行乱序执行，来优化性能（这一点我在《共享内存模型》一文中有提到过）。而">
+<meta property="og:updated_time" content="2018-07-15T07:31:44.786Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="内存屏障">
+<meta name="twitter:description" content="内存屏障内存屏障是个啥？​    内存屏障，是计算机CPU在多核时代，通过数据拷贝，将一个处理器的内存状态对其他处理器可见。在百度百科中，内存屏障也被称呼为内存栅栏，内存栅障，屏障指令等。乍一看到内存栅栏这个这个名词，我还以为这个是跟Java栅栏是一个东西，但是实际上两者并不相同。    在执行CPU指令的时候，CPU会对指令进行乱序执行，来优化性能（这一点我在《共享内存模型》一文中有提到过）。而">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-内存屏障" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/11/内存屏障/" class="article-date">
+  <time datetime="2018-04-11T07:19:25.000Z" itemprop="datePublished">2018-04-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      内存屏障
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h1><h3 id="内存屏障是个啥？"><a href="#内存屏障是个啥？" class="headerlink" title="内存屏障是个啥？"></a>内存屏障是个啥？</h3><p>​    内存屏障，是计算机CPU在多核时代，通过数据拷贝，将一个处理器的内存状态对其他处理器可见。在百度百科中，内存屏障也被称呼为内存栅栏，内存栅障，屏障指令等。乍一看到内存栅栏这个这个名词，我还以为这个是跟Java栅栏是一个东西，但是实际上两者并不相同。<br>    在执行CPU指令的时候，CPU会对指令进行乱序执行，来优化性能（这一点我在《共享内存模型》一文中有提到过）。而在多线程的时候，乱序执行可能会导致代码的执行跟预期结果不同，内存屏障同时阻止指令排序行为的发生。</p>
+<h3 id="内存屏障有啥用？"><a href="#内存屏障有啥用？" class="headerlink" title="内存屏障有啥用？"></a>内存屏障有啥用？</h3><p>​    在CPU层次，内存屏障分为两种：读屏障 Load Barrier 和写屏障 Store Barrier。读屏障表示在线程读取前，将主存的内容载入到缓存或者是线程内存里。写屏障表示在缓存或者线程内存里插入后，将更新写入到主内存里。<br>    通过内存屏障，主内存和缓存（线程内存）之间做到了数据统一，保证了可见性。也就是说通过内存屏障，已经达成了共享内存模型的可见性要求。</p>
+<h3 id="内存屏障的缺陷"><a href="#内存屏障的缺陷" class="headerlink" title="内存屏障的缺陷"></a>内存屏障的缺陷</h3><p>​    通过内存屏障，保证了数据可见性，同时防止屏障两端指令的重排序。但是内存屏障做不到并发过程中的原子性，这个也就是volatile关键字仅仅能够提供可见性，却不能够提供原子性的原因，因为volatile的实现就是通过内存屏障来进行实现的。</p>
+<blockquote>
+<h5 id="内存屏障做不到原子性的原因"><a href="#内存屏障做不到原子性的原因" class="headerlink" title="内存屏障做不到原子性的原因:"></a>内存屏障做不到原子性的原因:</h5><p>当存在两个线程Ta和Tb以及一个共享变量count=0，第一时刻Ta读取了count的值，这个读操作采用了内存屏障，读取前将Ta线程的内存里的数据清空，然后将主存的count复制到Ta线程的内存。<br>Ta线程执行count的++操作，此时Tb线程读取count的值，此时主存内count的值为0。<br>Ta执行变量count的++操作结束，将数据写回。同时Tb将读取的count执行++操作。此时主存内count的值为1。<br>Tb将数据写回。此时主存内的count值仍为1。</p>
+</blockquote>
+<p>​    如果程序的执行是正确的，那么最终结果应该是count=2，但是因为在程序执行过程中不提供原子性支持，所以会出现错误。<br>    这一部分内容都是CPU层次的内存屏障，下面的内容是Java层次的内存屏障。</p>
+<h3 id="Java内存屏障"><a href="#Java内存屏障" class="headerlink" title="Java内存屏障"></a>Java内存屏障</h3><p>​    Java内存屏障包括四种：<code>LoadStore</code>，<code>StoreStore</code>，<code>LoadLoad</code>，<code>StoreLoad</code>。也就是CPU层次的内存屏障两两结合。</p>
+<blockquote>
+<p>LoadLoad ：   对于这样的语句Load1; LoadLoad; Load2，在Load2及后续读取操作要读取的数据被访问前，保证Load1要读取的数据被读取完毕。<br>StoreStore ： 对于这样的语句Store1; StoreStore; Store2，在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。<br>LoadStore ：  对于这样的语句Load1; LoadStore; Store2，在Store2及后续写入操作被刷出前，保证Load1要读取的数据被读取完毕。<br>StoreLoad  ：  对于这样的语句Store1; StoreLoad;  Load2，在Load2及后续所有读取操作执行前，保证Store1的写入对所有处理器可见。在大多数处理器的实现中，这个屏障是个万能屏障，兼具其它三种内存屏障的功能，但是开销相对较大。</p>
+</blockquote>
+<h3 id="JVM层次对于内存屏障的实现"><a href="#JVM层次对于内存屏障的实现" class="headerlink" title="JVM层次对于内存屏障的实现"></a>JVM层次对于内存屏障的实现</h3><h4 id="volatile语义中的内存屏障"><a href="#volatile语义中的内存屏障" class="headerlink" title="volatile语义中的内存屏障"></a>volatile语义中的内存屏障</h4><p>​    volatile对于内存屏障实现是悲观的，对于volatile变量：</p>
+<blockquote>
+<p>每次写操作前插入StoreStore屏障，写操作后插入StoreLoad屏障<br>每次读操作前插入LoadLoad屏障，读操作后插入LoadStore屏障</p>
+</blockquote>
+<p>​    同样的，因为内存屏障的缺陷，volatile不能够表现出原子性的特性，仅仅能够提供内存可见性。</p>
+<h4 id="final语义中的内存屏障"><a href="#final语义中的内存屏障" class="headerlink" title="final语义中的内存屏障"></a>final语义中的内存屏障</h4><p>​    在final域里，分别针对屏障做出了规则限制：</p>
+<blockquote>
+<h5 id="写final域"><a href="#写final域" class="headerlink" title="写final域"></a>写final域</h5><blockquote>
+<p>JMM禁止编译器把final域的写重排序到构造函数外。<br>编译器会在final域的写之后，return之前，插入StoreStore屏障。</p>
+</blockquote>
+<h5 id="读final域"><a href="#读final域" class="headerlink" title="读final域"></a>读final域</h5><blockquote>
+<p>初次读对象引用域初次读该对象包含的final域，JMM禁止处理器重排序这两个操作。</p>
+</blockquote>
+</blockquote>
+<p>​    也就是说，对于final域，总是在一个对象的所有final域写入完毕后才能读取和引用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/11/内存屏障/" data-id="cjjmji7gv000xdnmc34vnb4i3" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/12/同步语义-volatile/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          同步语义-volatile
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/09/共享内存模型/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">共享内存模型</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

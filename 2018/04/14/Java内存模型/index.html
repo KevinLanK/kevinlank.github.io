@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Java内存模型 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Java内存模型​    在之前的一些有关并发的文章里面，掺杂着各种JMM有关的知识点，在这里加入JVM的内存统一整理一下。 Java内存区域​    在《深入理解JVM》一书中，对Java的内存区域（运行时数据区）进行了比较明确的划分：  虚拟机栈 虚拟机栈描述的是Java方法执行的内存模型：每个方法在执行的同时会创建一个栈帧(Stack Frame)用于存储局部变量表、操作数栈、动态链接、方法">
+<meta name="keywords" content="Java,并发,内存模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存模型">
+<meta property="og:url" content="http://yoursite.com/2018/04/14/Java内存模型/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java内存模型​    在之前的一些有关并发的文章里面，掺杂着各种JMM有关的知识点，在这里加入JVM的内存统一整理一下。 Java内存区域​    在《深入理解JVM》一书中，对Java的内存区域（运行时数据区）进行了比较明确的划分：  虚拟机栈 虚拟机栈描述的是Java方法执行的内存模型：每个方法在执行的同时会创建一个栈帧(Stack Frame)用于存储局部变量表、操作数栈、动态链接、方法">
+<meta property="og:image" content="http://yoursite.com/2018/04/14/Java内存模型/内存划分.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/14/Java内存模型/信息交互.png">
+<meta property="og:updated_time" content="2018-07-15T07:37:54.708Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java内存模型">
+<meta name="twitter:description" content="Java内存模型​    在之前的一些有关并发的文章里面，掺杂着各种JMM有关的知识点，在这里加入JVM的内存统一整理一下。 Java内存区域​    在《深入理解JVM》一书中，对Java的内存区域（运行时数据区）进行了比较明确的划分：  虚拟机栈 虚拟机栈描述的是Java方法执行的内存模型：每个方法在执行的同时会创建一个栈帧(Stack Frame)用于存储局部变量表、操作数栈、动态链接、方法">
+<meta name="twitter:image" content="http://yoursite.com/2018/04/14/Java内存模型/内存划分.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java内存模型" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/14/Java内存模型/" class="article-date">
+  <time datetime="2018-04-14T07:36:54.000Z" itemprop="datePublished">2018-04-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java内存模型
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a>Java内存模型</h1><p>​    在之前的一些有关并发的文章里面，掺杂着各种JMM有关的知识点，在这里加入JVM的内存统一整理一下。</p>
+<h3 id="Java内存区域"><a href="#Java内存区域" class="headerlink" title="Java内存区域"></a>Java内存区域</h3><p>​    在《深入理解JVM》一书中，对Java的内存区域（运行时数据区）进行了比较明确的划分：<br><img src="/2018/04/14/Java内存模型/内存划分.png" alt="Java虚拟机运行时数据区"></p>
+<blockquote>
+<h6 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h6><blockquote>
+<p>虚拟机栈描述的是Java方法执行的内存模型：每个方法在执行的同时会创建一个栈帧(Stack Frame)用于存储局部变量表、操作数栈、动态链接、方法出口等信息。常说的Java栈指的就是在Java虚拟机栈中的局部变量表部分。<br>局部变量表部分存储一直的基本数据类型对象引用和returnAddress类型。<br><code>在虚拟机栈中可能出现的错误：</code></p>
+<blockquote>
+<p>线程请求的栈深度大于虚拟机允许的深度，抛出StackOverFlowError异常。<br>扩展时无法申请到足够的内存，抛出OutOfMemoryError异常。</p>
+</blockquote>
+</blockquote>
+<h6 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h6><blockquote>
+<p>本地方法栈为虚拟机使用的Native方法进行服务，其他的基本类似于虚拟机栈。在JVM规范中，并没有对本地方发展的具体实现方法以及数据结构作强制规定，虚拟机可以自由实现它。在HotSopt虚拟机中直接就把本地方法栈和Java栈合二为一。</p>
+</blockquote>
+<h6 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h6><blockquote>
+<p>Java堆(Java Heap)是Java虚拟机中管理的内存最大的一块，并且堆被所有的线程共享。堆会存放对象实例，在JVM规范中的描述是：所有的对象实例以及数组都要在堆上分配。<br>Java堆是垃圾收集器管理的主要区域，所以也被称为”GC堆”。还可能存在多种更为细致的划分，目的是更好的回收内存，或者更快的分配内存。<br>在JVM规范中，Java堆可以处于物理上不连续的内存空间中，只要逻辑上是连续的。<br><code>在堆中可能出现的错误</code></p>
+<blockquote>
+<p>如果在堆中没有内存完成实例分配，并且堆再也无法扩展时，将会抛出OutOfMemoryError异常。</p>
+</blockquote>
+</blockquote>
+<h6 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h6><blockquote>
+<p>方法区跟Java堆一样，是各个线程共享的内存区域，用于存储已经被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。方法区也被称之为Non-Heap(非堆)，用以跟Java堆的区分。<br>在方法区中存在运行时常量池，用来存放编译期生成的各种字面量和符号引用以及存储翻译出来的直接引用，并且运行期常量池是能够在运行过程中进行添加的，比如String类的intern()方法。<br><code>常量池和运行期常量池辨析</code></p>
+<blockquote>
+<p>在Class文件中，除了有类的版本、字段、方法、借口等描述信息，还有常量池，常量池存放编译期生成的各种字面量和符号引用，这一部分内容会在类加载后刷入到方法区的运行时常量池中存储。<br>运行期常量池是方法区的一部分，并且能够在运行期间进行添加。</p>
+</blockquote>
+<p><code>方法区可能出现的错误</code></p>
+<blockquote>
+<p>当方法区无法满足内存分配时，将会抛出OutOfMemoryError异常。</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<h3 id="Java内存模型-1"><a href="#Java内存模型-1" class="headerlink" title="Java内存模型"></a>Java内存模型</h3><p>​    在Java中，采用的线程通信方式是共享内存模型，所以Java内存模型(Java  Memory  Model)的实现是通过共享内存的方法进行实现的。Java内存模型的主要目标是定义程序中各个变量的访问规则，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节。<br>    Java的内存模型规定了所有的变量都储存在主内存，   每条线程还有自己的工作过内存，线程的工作内存保存了线程中使用到的主内存副本拷贝，线程的操作是对工作内存的操作，不允许直接操作主内存。并且线程之间的工作内存是互相隔离的，线程间的传递需要通过主内存，这也就是共享内存模型的内容。<br><img src="/2018/04/14/Java内存模型/信息交互.png" alt="线程、工作内存、主内存三者的交互关系"><br>    除去基本的内存模型，JMM保证了可见性、原子性、有序性。</p>
+<blockquote>
+<p>可见性的概念也就是内存可见性，JMM对于可见性的支持是采用了volatile关键字或者锁来保证可见性。<br>原子性的概念也就是在执行过程中，一个操作是不能够中断的，这之间存在线程之间的共享变量读取写入的问题。在JMM中，采用了synchronized来保证并发过程的安全性和操作的原子性。<br>有序性指的是在指令执行过程中的指令重排序现象，JMM采用了volatile、synchronized、final分别做到了不同的保证，来确保在多线程环境过程中的语义有序性，例如实现happens-before规则和as-if-serial语义。</p>
+</blockquote>
+<p>​    上述提到的JMM确保的规则，在其他文章中都有提及，这里不再复述。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/14/Java内存模型/" data-id="cjjmji7ge0007dnmc9189hyas" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/14/Java中的并发/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Java中的并发 
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/13/线程间通信/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">线程间通信</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

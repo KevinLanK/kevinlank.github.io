@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Java中的Concurrent类的实现  | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Java中的Concurrent类的实现​    在Jdk的实现中，对于HashMap的实现是线程非安全的，在大量并发读的情况下，HashMap能够保持线程安全，但是在存在大量写的情况下，HashMap将会出现并发错误，所以JDK实现了ConcurrentHashMap来保证线程安全并且高效的HashMap。    JDK还实现了ConcurrentLinkedQueue来实现在并发中的非阻塞的队">
+<meta name="keywords" content="Java,源码解读,并发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中的Concurrent类的实现 ">
+<meta property="og:url" content="http://yoursite.com/2018/04/18/Java中的Concurrent类的实现/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java中的Concurrent类的实现​    在Jdk的实现中，对于HashMap的实现是线程非安全的，在大量并发读的情况下，HashMap能够保持线程安全，但是在存在大量写的情况下，HashMap将会出现并发错误，所以JDK实现了ConcurrentHashMap来保证线程安全并且高效的HashMap。    JDK还实现了ConcurrentLinkedQueue来实现在并发中的非阻塞的队">
+<meta property="og:updated_time" content="2018-07-15T07:47:37.156Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java中的Concurrent类的实现 ">
+<meta name="twitter:description" content="Java中的Concurrent类的实现​    在Jdk的实现中，对于HashMap的实现是线程非安全的，在大量并发读的情况下，HashMap能够保持线程安全，但是在存在大量写的情况下，HashMap将会出现并发错误，所以JDK实现了ConcurrentHashMap来保证线程安全并且高效的HashMap。    JDK还实现了ConcurrentLinkedQueue来实现在并发中的非阻塞的队">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java中的Concurrent类的实现" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/18/Java中的Concurrent类的实现/" class="article-date">
+  <time datetime="2018-04-18T07:46:53.000Z" itemprop="datePublished">2018-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java中的Concurrent类的实现 
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java中的Concurrent类的实现"><a href="#Java中的Concurrent类的实现" class="headerlink" title="Java中的Concurrent类的实现"></a>Java中的Concurrent类的实现</h1><p>​    在Jdk的实现中，对于HashMap的实现是线程非安全的，在大量并发读的情况下，HashMap能够保持线程安全，但是在存在大量写的情况下，HashMap将会出现并发错误，所以JDK实现了ConcurrentHashMap来保证线程安全并且高效的HashMap。<br>    JDK还实现了ConcurrentLinkedQueue来实现在并发中的非阻塞的队列和BlockingQueue的阻塞线程的队列。</p>
+<h3 id="HashMap的实现"><a href="#HashMap的实现" class="headerlink" title="HashMap的实现"></a>HashMap的实现</h3><p>​    在ConcurrentHashMap讲述之前，先对HashMap的底层实现做一下总结。<br>    HashMap：散列表。在Java中HashMap通过分离链接法来进行实现，也就是通过数组+链表的方法来进行实现。在JDK1.8后，如果有一个散列表某个散列值对应的链表的元素超过一定值，这个对应的链表将会转化为红黑树的实现，这个值默认为8。也就是说，实际上HashMap的实现为数组+链表+红黑树的实现。<br>    在HashMap的实现中，如果HashMap的数组容量不足，也就是散列后超出现有容量大小，将会对数组大小进行扩增，将新的数组大小扩展成为当前状态的两倍，然后将数据重新散列到新的数组上，所以扩容阶段将会消耗很多资源，并且在并发过程中，出现问题的地方就在扩容阶段。</p>
+<h5 id="HashMap的get"><a href="#HashMap的get" class="headerlink" title="HashMap的get"></a>HashMap的get</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">final Node&lt;K,V&gt; getNode(int hash, Object key) &#123;</span><br><span class="line">    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; first, e; int n; K k;</span><br><span class="line">    if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;</span><br><span class="line">        (first = tab[(n - 1) &amp; hash]) != null) &#123;</span><br><span class="line">        if (first.hash == hash &amp;&amp; // always check first node</span><br><span class="line">            ((k = first.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">            return first;</span><br><span class="line">        if ((e = first.next) != null) &#123;</span><br><span class="line">            if (first instanceof TreeNode)</span><br><span class="line">                return ((TreeNode&lt;K,V&gt;)first).getTreeNode(hash, key);</span><br><span class="line">            do &#123;</span><br><span class="line">                if (e.hash == hash &amp;&amp;</span><br><span class="line">                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">                    return e;</span><br><span class="line">            &#125; while ((e = e.next) != null);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    HashMap将会对关键词key进行hash，然后在数组中进行查找到这个值，然后对整个整个链表进行查找查看是否有这个key对应的value。</p>
+<h5 id="HashMap的put"><a href="#HashMap的put" class="headerlink" title="HashMap的put"></a>HashMap的put</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">final V putVal(int hash, K key, V value, boolean onlyIfAbsent,</span><br><span class="line">                   boolean evict) &#123;</span><br><span class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;</span><br><span class="line">        if ((tab = table) == null || (n = tab.length) == 0)</span><br><span class="line">            n = (tab = resize()).length;</span><br><span class="line">        if ((p = tab[i = (n - 1) &amp; hash]) == null)</span><br><span class="line">            tab[i] = newNode(hash, key, value, null);</span><br><span class="line">        else &#123;</span><br><span class="line">            Node&lt;K,V&gt; e; K k;</span><br><span class="line">            if (p.hash == hash &amp;&amp;</span><br><span class="line">                ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">                e = p;</span><br><span class="line">            else if (p instanceof TreeNode)</span><br><span class="line">                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);</span><br><span class="line">            else &#123;</span><br><span class="line">                for (int binCount = 0; ; ++binCount) &#123;</span><br><span class="line">                    if ((e = p.next) == null) &#123;</span><br><span class="line">                        p.next = newNode(hash, key, value, null);</span><br><span class="line">                        if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st</span><br><span class="line">                            treeifyBin(tab, hash);</span><br><span class="line">                        break;</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (e.hash == hash &amp;&amp;</span><br><span class="line">                        ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))</span><br><span class="line">                        break;</span><br><span class="line">                    p = e;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            if (e != null) &#123; // existing mapping for key</span><br><span class="line">                V oldValue = e.value;</span><br><span class="line">                if (!onlyIfAbsent || oldValue == null)</span><br><span class="line">                    e.value = value;</span><br><span class="line">                afterNodeAccess(e);</span><br><span class="line">                return oldValue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        ++modCount;</span><br><span class="line">        if (++size &gt; threshold)</span><br><span class="line">            resize();</span><br><span class="line">        afterNodeInsertion(evict);</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>​    首先先判断是否需要扩容，然后根据key的散列查找到数组索引，然后新建节点进行插入，插入过程中分别按照红黑树或者链表的方法进行插入。</p>
+<h3 id="ConcurrentHashMap的实现"><a href="#ConcurrentHashMap的实现" class="headerlink" title="ConcurrentHashMap的实现"></a>ConcurrentHashMap的实现</h3><p>​    在并发环境下如果同时对HashMap进行写操作，那么HashMap将会导致内部的Entry数据会链表形成环状数据结构，然后Entry的next节点将永远不为空，也就是会产生死循环获取Entry。而如果对写过程进行加锁，那么错误将不会发生，但是会导致在线程竞争激烈的情况下会出现大量线程阻塞的状态，进而导致效率低下。<br>    针对这个问题，ConcurrentHashMap提供了锁分段技术来提高并发访问率。<br>    分段锁也就是对当前线程访问的数组部分进行加锁，而不是对整个数组进行加锁，通过这种方法，实现写入的时候只有部分加锁，而其他部分将允许线程正常访问。</p>
+<h3 id="ConcurrentLinkedQueue的实现"><a href="#ConcurrentLinkedQueue的实现" class="headerlink" title="ConcurrentLinkedQueue的实现"></a>ConcurrentLinkedQueue的实现</h3><p>​    在普通的队列实现中，在并发环境下，那么两个线程对同一个队列进行push的时候，尾节点指向两个不同的新加入节点，那么将会有一个节点被销毁；如果是两个线程同时对一个元素进行pop操作，也会出现错误。在JDK里面，实现了非阻塞的队列和阻塞队列，非阻塞队列被实心为ConcurrentQueue，阻塞队列实现为BlockingQueue。<br>    在ConcurrentQueue中，采用CAS算法来对队列中的元素进行写操作。并且在队列内部维护两个节点：head节点和tail节点，head节点指向队列的尾节点。</p>
+<blockquote>
+<h6 id="入队列和出队列"><a href="#入队列和出队列" class="headerlink" title="入队列和出队列"></a>入队列和出队列</h6><p>不同于一般的队列，ConcurrentQueue在入队列和出队列中采用了不一样的方法。<br>在入队列调整tail节点的时候，会首先判断tail节点当前的指向，如果添加的节点为第一个元素，那么head和tail节点中的next都会指向这个节点，在添加非首节点的时候，判断tail的节点中的next节点，如果为空，会将tail节点的next节点设置为添加节点，如果不为空，将tail节点指向添加节点。<br>在出队列的时候，先检查当前的head节点，如果当前head节点指向的节点元素为空，那么表示已经有其他线程将头节点取走，继续判断下一个头节点，直到能够取出当前节点的元素。</p>
+</blockquote>
+<h3 id="BlockingQueue阻塞队列"><a href="#BlockingQueue阻塞队列" class="headerlink" title="BlockingQueue阻塞队列"></a>BlockingQueue阻塞队列</h3><p>​    在阻塞队列中对队列的插入和移除操作进行了扩展：</p>
+<blockquote>
+<p>支持阻塞的插入方法：当队列满的时候，队列阻塞插入元素的线程，直到队列不满。<br>支持阻塞的移除方法：当队列为空的时候，获取元素的线程会阻塞直到队列变为非空。</p>
+</blockquote>
+<p>​    在JDK7里面，一共提供了7个阻塞队列：</p>
+<blockquote>
+<p>ArrayBlockingQueue：由数组结构组成的有界阻塞队列<br>LinkedBlockingQueue：由链表结构组成的有界阻塞队列<br>PriorityBlockingQueue：支持优先级排序的无界阻塞队列<br>DelayQueue：使用优先级队列实现的无界阻塞队列<br>SynchronousQueue：不储存元素的阻塞队列<br>LinkedTransferQueue：由链表结构组成的无界阻塞队列<br>LinkedBlockingDeque：由链表结构组成的双向阻塞队列</p>
+</blockquote>
+<p>​    在队列中元素为空的时候，如果有线程想要获取元素，那么将会进行等待，当有其他线程添加元素到队列中的时候，JDK采用了多种不同的模式提醒阻塞线程：Condition、LockSupport的park对线程进行唤醒操作。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/04/18/Java中的Concurrent类的实现/" data-id="cjjmji7g70004dnmciqvnj2eq" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码解读/">源码解读</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/21/Java中不可变的一般类型/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Java中不可变的一般类型 
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

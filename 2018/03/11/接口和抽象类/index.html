@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>接口和抽象类 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="接口和抽象类​    本没有计划整理这个抽象类或者接口的知识点的，因为这两个概念非常的简单了，无非是对类的抽象和高度抽象。但是在读过Java9的源码之后，因为增加了default关键字，所以，整理一下这个知识点。">
+<meta name="keywords" content="Java,基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="接口和抽象类">
+<meta property="og:url" content="http://yoursite.com/2018/03/11/接口和抽象类/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="接口和抽象类​    本没有计划整理这个抽象类或者接口的知识点的，因为这两个概念非常的简单了，无非是对类的抽象和高度抽象。但是在读过Java9的源码之后，因为增加了default关键字，所以，整理一下这个知识点。">
+<meta property="og:updated_time" content="2018-07-15T07:26:16.070Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="接口和抽象类">
+<meta name="twitter:description" content="接口和抽象类​    本没有计划整理这个抽象类或者接口的知识点的，因为这两个概念非常的简单了，无非是对类的抽象和高度抽象。但是在读过Java9的源码之后，因为增加了default关键字，所以，整理一下这个知识点。">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-接口和抽象类" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/11/接口和抽象类/" class="article-date">
+  <time datetime="2018-03-11T06:37:13.000Z" itemprop="datePublished">2018-03-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      接口和抽象类
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="接口和抽象类"><a href="#接口和抽象类" class="headerlink" title="接口和抽象类"></a>接口和抽象类</h1><p>​    本没有计划整理这个抽象类或者接口的知识点的，因为这两个概念非常的简单了，无非是对类的抽象和高度抽象。但是在读过Java9的源码之后，因为增加了default关键字，所以，整理一下这个知识点。</p>
+<a id="more"></a>
+<h3 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h3><p>​    在类里，使用继承来描述一个类遵循接口的定义并不太合适，因为调用该接口的类与这个接口并没有实际的包含关系，即is-a的关系，所以，使用一个类实现了某个接口更为合适。</p>
+<p>​    使用abstract显式定义抽象类，使用interface定义接口。interface定义的接口是更加抽象的抽象类。接口中的方法可以通过default关键字定义为可包含方法实体的方法，否则只能够包含方法声明。接口中的方法隐式的声明为public，尽量将其显式声明。接口内的成员变量都被隐式声明为public,static,final，并且需要显式初始化，成员变量为常量（大写，使用_间隔词语）。</p>
+<p>​    让一个类遵循某个接口：使用inplements关键字，将接口的方法重新在类中声明定义。允许同一个接口具有多个不同的具体实现，常用策略设计模式。可以在任何类上添加新的接口，让方法接受接口类型，这是一种让任何类都可以对该方法进行适配的方式。</p>
+<p>​    接口不具备任何形式的类型，所以来自多个类型的类都是可以继承同一个接口的。</p>
+<p>​    接口可以多重继承。</p>
+<p>​    在导出类中，不强制要求必须有一个是抽象的或“具体的“（没有任何抽象方法的）基类。如果要从一个非接口的类继承，那么只能从一个类继承。其余的基元素必须是接口。需要将所有的接口名都置于inplements关键字之后，用逗号一一隔开。可以继承任意多个接口，并可以向上转型为每个接口，因为每个接口都是一个独立类型。换而言之，一个类可以继承多个接口，只要书写符合规范。接口也可以继承，通过继承接口产生新的接口。使用extends继承接口，并且可以继承多个接口，只要书写符合规范，即将接口名用逗号分隔。</p>
+<p>​    接口可以嵌套在类或其他接口中。实现某个接口时，不需要实现嵌套在其内部的任何接口，private接口不能在定义它的类之外实现。</p>
+<p>​    在打算组合的不同接口中使用相同的方法名会造成代码的可读性的混乱。</p>
+<h3 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h3><p>​    抽象类（抽象基类）：含有抽象方法的类，当一个类含有一个或多个抽象方法，该类必须被限定为抽象(abstract)的。建立一个基类，这个基类仅提供接口，即创建类的通用部分，表示所有导出类的共同部分。这个类的对象没有实际意义，因为类只是表示一个接口，没有具体的实现内容，不同的子类可以用不同的方式表示这些接口。</p>
+<p>​    继承时候，抽象类的抽象方法需要在导出类全部重写，否则导出类也是抽象类，直到所有的抽象方法全部被重写。</p>
+<p>​    抽象类内是可以不含有抽象方法的，也就是可以含有可实现的方法，但是不能实例化。</p>
+<p>​    抽象方法：方法使用abstract声明，抽象方法是不完整的，仅有方法声明，没有方法体。</p>
+<p>​    抽象类的继承同一般类的继承，使用extends。这点不同于接口。</p>
+<h3 id="辨析"><a href="#辨析" class="headerlink" title="辨析"></a>辨析</h3><p>相同点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 都不能被直接实例化，都可以通过继承实现其抽象方法。</span><br><span class="line">* 都是面向抽象编程的技术基础，实现了诸多的设计模式。</span><br></pre></td></tr></table></figure>
+<p>不同点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">* 接口支持多继承；抽象类不能实现多继承。</span><br><span class="line">* 接口只能定义抽象规则；抽象类既可以定义规则，还可能提供已实现的成员。</span><br><span class="line">* 接口是一组行为规范；抽象类是一个不完全的类，着重族的概念。</span><br><span class="line">* 接口可以用于支持回调;抽象类不能实现回调，因为继承不支持。</span><br><span class="line">* 接口只包含方法、属性、索引器、事件的签名，但不能定义字段和包含实现的方法(非default定义)；抽象类可以定义字段、属性、包含有实现的方法。 </span><br><span class="line">* 接口可以作用于值类型和引用类型；抽象类只能作用于引用类型。例如，Struct就可以继承接口，而不能继承类</span><br><span class="line">* 接口定义不同类型之间的类的方法;抽象类只定义了子类可以使用的方法。</span><br><span class="line">* 接口中的方法都具有public的访问权限;抽象类里的方法可以具有正常类的访问权限。</span><br></pre></td></tr></table></figure>
+<h6 id="查看更多"><a href="#查看更多" class="headerlink" title="查看更多"></a>查看更多</h6><p>Java基础：<a href="https://kevinlank.github.io/2018/03/08/JAVA%E5%9F%BA%E7%A1%80/" target="_blank" rel="noopener">Java基础</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/11/接口和抽象类/" data-id="cjjmji7h3001ednmckliy9f03" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/基础/">基础</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/12/有趣的java-util-List/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          有趣的java.util.*List
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/11/Java的全新关键字-default/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Java的全新关键字-default</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

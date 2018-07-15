@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>数据库数据模型 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在去年学习数据库原理的时候,就听老师讲过数据模型,层次模型、网状模型、关系模型，这样一些数据模型，当时不懂数据结构，所以哪怕当时老师讲的再清楚，过后没多久也就都忘记了。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;恰巧今天在看一本书的时候，看到了这么一句话：“在关系模型中，可以使用高级的程序语言，如SQL，使得开发者能够在较高的层次上进行开发。很少">
+<meta name="keywords" content="数据库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库数据模型">
+<meta property="og:url" content="http://yoursite.com/2018/03/06/数据库数据模型/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在去年学习数据库原理的时候,就听老师讲过数据模型,层次模型、网状模型、关系模型，这样一些数据模型，当时不懂数据结构，所以哪怕当时老师讲的再清楚，过后没多久也就都忘记了。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;恰巧今天在看一本书的时候，看到了这么一句话：“在关系模型中，可以使用高级的程序语言，如SQL，使得开发者能够在较高的层次上进行开发。很少">
+<meta property="og:updated_time" content="2018-07-15T07:26:04.302Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据库数据模型">
+<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;在去年学习数据库原理的时候,就听老师讲过数据模型,层次模型、网状模型、关系模型，这样一些数据模型，当时不懂数据结构，所以哪怕当时老师讲的再清楚，过后没多久也就都忘记了。&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;恰巧今天在看一本书的时候，看到了这么一句话：“在关系模型中，可以使用高级的程序语言，如SQL，使得开发者能够在较高的层次上进行开发。很少">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-数据库数据模型" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/06/数据库数据模型/" class="article-date">
+  <time datetime="2018-03-06T08:41:57.000Z" itemprop="datePublished">2018-03-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      数据库数据模型
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;在去年学习数据库原理的时候,就听老师讲过数据模型,层次模型、网状模型、关系模型，这样一些数据模型，当时不懂数据结构，所以哪怕当时老师讲的再清楚，过后没多久也就都忘记了。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;恰巧今天在看一本书的时候，看到了这么一句话：“在关系模型中，可以使用高级的程序语言，如SQL，使得开发者能够在较高的层次上进行开发。很少的SQL语句就可以完成数千行C代码才能完成的工作，或者是数百行网状模型或层次模型才能完成的数据访问工作。”然后对，文章中提到的两种模型感兴趣了，就搜集资料学习了一下。<br></p>
+<a id="more"></a>
+<h3 id="nbsp-nbsp-nbsp-nbsp-层次模型"><a href="#nbsp-nbsp-nbsp-nbsp-层次模型" class="headerlink" title="&nbsp;&nbsp;&nbsp;&nbsp;层次模型"></a>&nbsp;&nbsp;&nbsp;&nbsp;层次模型</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;用一颗“有向树”的数据结构来表示各类实体及实体间的联系，树中每一个节点代表一个记录类型，树状结构表示实体型间的联系。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;这是来自百度的解释。字面意思，很容易理解，层次模型就是一颗树，用树枝来标示关系，用叶或枝干标示数据。从程序人的角度看，结构非常的简单，数据的查询操作就是树的查询操作，模型的结构通过结点的双亲就能推出。复杂或者说影响大的是插入删除操作，在大量的数据请求中，效率很低，另外对于多对多关系和多对一关系不好描述。</p>
+<h3 id="nbsp-nbsp-nbsp-nbsp-网状模型"><a href="#nbsp-nbsp-nbsp-nbsp-网状模型" class="headerlink" title="&nbsp;&nbsp;&nbsp;&nbsp;网状模型"></a>&nbsp;&nbsp;&nbsp;&nbsp;网状模型</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;一个事物和另外的几个都有联系，这样构成一张网状图。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;看到这个描述，我最先想到的就是现在正处于风口的区块链技术，虽然一个是基于网状网络，而另一个是数据实体间的网状模型，但是两种构成基础相同：基于数据结构中的图，更加容易的描述出不同实体之间的非层次关系，例如多对一关系和多对多关系。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;但是基于图创建的P2P网状网络，或是流行的区块链技术，或是数据的网状模型，都在本身有一个弊端：结构的复杂性。这种复杂性导致了网状结构的复杂性，不易实现。</p>
+<h3 id="nbsp-nbsp-nbsp-nbsp-关系模型"><a href="#nbsp-nbsp-nbsp-nbsp-关系模型" class="headerlink" title="&nbsp;&nbsp;&nbsp;&nbsp;关系模型"></a>&nbsp;&nbsp;&nbsp;&nbsp;关系模型</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;前面说了这么多，我也只是为了给关系模型做铺垫而已（偷乐）。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;关系模型通过一个关系的二维表给出描述。表，一种按照顺序排列的数据集合，在这个结构里面，每个表表示一个实体，实体之间的关系，通过表之间的关系或者关联表给出，相较于层次结构有了极大的优化。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;在关系模型中，关系模式=关系名+属性集合的组合。关系的元组之间具有无序性，可以通过某一个“属性”来标识顺序关系，同样的，关系数据库的数据搜索就成了一个可以加深研究的方面。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;关系并不是静态的，在关系模型里面，关系模式是静态的，但是关系是动态的，通过操作不断的更新数据库，这也就为开发维护带来了极大的方便。</p>
+<h3 id="nbsp-nbsp-nbsp-nbsp-半结构化模型"><a href="#nbsp-nbsp-nbsp-nbsp-半结构化模型" class="headerlink" title="&nbsp;&nbsp;&nbsp;&nbsp;半结构化模型"></a>&nbsp;&nbsp;&nbsp;&nbsp;半结构化模型</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;除去关系模型在当今数据库系统中大范围应用外，还有一种独特的关系模型：半结构化数据模型。<br><br>&nbsp;&nbsp;&nbsp;&nbsp;这种模型，我了解到的就是XML和HTML这两种文档使用，具体结构的详细信息我会在单独了解后再整理。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/06/数据库数据模型/" data-id="cjjmji7h5001gdnmcn0gd7pyw" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/08/Java基础/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          Java基础
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/05/我的博客/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">博客！博客！</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java新特性/">Java新特性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP-IP/">TCP/IP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存屏障/">内存屏障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存模型/">内存模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/单例/">单例</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/双轴快排/">双轴快排</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/同步语义/">同步语义</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基础/">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/并发/">并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/文章整理/">文章整理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂记/">杂记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/源码解读/">源码解读</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/算法/">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/系统搭建/">系统搭建</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线程通信/">线程通信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/锁/">锁</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Java新特性/" style="font-size: 10px;">Java新特性</a> <a href="/tags/TCP-IP/" style="font-size: 10px;">TCP/IP</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/内存屏障/" style="font-size: 10px;">内存屏障</a> <a href="/tags/内存模型/" style="font-size: 12px;">内存模型</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/双轴快排/" style="font-size: 10px;">双轴快排</a> <a href="/tags/同步语义/" style="font-size: 12px;">同步语义</a> <a href="/tags/基础/" style="font-size: 14px;">基础</a> <a href="/tags/并发/" style="font-size: 18px;">并发</a> <a href="/tags/数据库/" style="font-size: 10px;">数据库</a> <a href="/tags/文章整理/" style="font-size: 10px;">文章整理</a> <a href="/tags/杂记/" style="font-size: 10px;">杂记</a> <a href="/tags/源码解读/" style="font-size: 16px;">源码解读</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/系统搭建/" style="font-size: 10px;">系统搭建</a> <a href="/tags/线程通信/" style="font-size: 10px;">线程通信</a> <a href="/tags/计算机网络/" style="font-size: 10px;">计算机网络</a> <a href="/tags/锁/" style="font-size: 12px;">锁</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/21/Java中不可变的一般类型/">Java中不可变的一般类型 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/18/Java中的Concurrent类的实现/">Java中的Concurrent类的实现 </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/可重入锁ReentrantLock和读写锁ReentrantReadWriteLock/">可重入锁ReentrantLock和读写锁ReentrantReadWriteLock </a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/17/AQS/">AQS</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/16/TCP连接的建立与关闭/">TCP连接的建立与关闭</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
